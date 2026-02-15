@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -44,6 +45,7 @@ class UserTitleState(models.Model):
     rating = models.PositiveSmallIntegerField(
         null=True,
         blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
         verbose_name="Оценка",
     )
     review = models.TextField(
@@ -74,6 +76,10 @@ class UserTitleState(models.Model):
             models.UniqueConstraint(
                 fields=["user", "title"],
                 name="uq_user_title_state",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(rating__isnull=True) | models.Q(rating__gte=0, rating__lte=10),
+                name="ck_user_title_state_rating_0_10",
             ),
         ]
         indexes = [
@@ -153,3 +159,30 @@ class UserProgress(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} — {self.title} (прогресс)"
+
+
+class UserEpisodeState(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+    )
+    episode = models.ForeignKey(
+        "media.Episode",
+        on_delete=models.CASCADE,
+        related_name="user_states",
+        verbose_name="Эпизод",
+    )
+    watched = models.BooleanField(default=False, verbose_name="Просмотрено")
+    watched_at = models.DateTimeField(null=True, blank=True, verbose_name="Когда просмотрено")
+
+    class Meta:
+        verbose_name = "Состояние эпизода"
+        verbose_name_plural = "Состояния эпизодов"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "episode"], name="uq_user_episode_state"),
+        ]
+        indexes = [models.Index(fields=["user", "watched"])]
+
+    def __str__(self) -> str:
+        return f"{self.user} — {self.episode}"

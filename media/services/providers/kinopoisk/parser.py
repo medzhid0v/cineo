@@ -4,14 +4,12 @@ from typing import Any
 from media.dtos import EpisodeDTO, SeasonDTO, SeasonsDTO, TitleDTO
 
 
-# === === === === === === ===
 class KinopoiskParser:
     """
     Отвечает только за преобразование сырого JSON
     от Kinopoisk API в доменные DTO.
     """
 
-    # --- --- --- --- --- --- ---
     @staticmethod
     def parse_title(data: dict[str, Any], external_id: int) -> TitleDTO:
         name = KinopoiskParser._parse_name(data, external_id)
@@ -28,6 +26,7 @@ class KinopoiskParser:
             poster_url=poster,
             source_url=KinopoiskParser._build_kp_url(external_id),
             is_series=is_series,
+            category=KinopoiskParser._parse_category(data, is_series),
         )
 
     @staticmethod
@@ -64,7 +63,6 @@ class KinopoiskParser:
 
         return SeasonsDTO(total=total, seasons=seasons)
 
-    # --- --- --- --- --- --- ---
     @staticmethod
     def _parse_name(data: dict[str, Any], external_id: int) -> str:
         name = ((data.get("nameRu") or "") or (data.get("nameEn") or "") or (data.get("nameOriginal") or "")).strip()
@@ -85,7 +83,23 @@ class KinopoiskParser:
             "TV_SERIES",
             "MINI_SERIES",
             "TV_SHOW",
+            "ANIME_SERIES",
         }
+
+    @staticmethod
+    def _parse_category(data: dict[str, Any], is_series: bool) -> str:
+        genres = {str(i.get("genre", "")).lower() for i in data.get("genres", [])}
+        api_type = (data.get("type") or "").upper()
+
+        if "аниме" in genres or "anime" in genres or "ANIME" in api_type:
+            return "anime"
+        if "мультфильм" in genres or "cartoon" in genres or "animated" in genres:
+            return "cartoon"
+        if is_series:
+            return "series"
+        if api_type in {"FILM", "VIDEO"}:
+            return "movie"
+        return "other"
 
     @staticmethod
     def _parse_int(value: Any) -> int | None:

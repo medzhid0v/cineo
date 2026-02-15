@@ -1,20 +1,22 @@
 from django.db import transaction
 
-from media.models import Episode, Season, Title, TitleType
+from media.models import Episode, Season, Title, TitleCategory, TitleType
 from media.services.providers import MediaProvider
+from media.services.user_state import ensure_user_records
 
 
 @transaction.atomic
-def import_title_by_external_id(external_id: int, provider: MediaProvider) -> Title:
+def import_title_by_external_id(external_id: int, provider: MediaProvider, user) -> Title:
     dto = provider.get_title(external_id)
 
     title_type = TitleType.SERIES if dto.is_series else TitleType.MOVIE
+    category = dto.category if dto.category in TitleCategory.values else TitleCategory.OTHER
 
-    # пока пишем в kp_* (т.к. модель заточена под KP)
     title, _ = Title.objects.update_or_create(
         kp_id=dto.external_id,
         defaults={
             "type": title_type,
+            "category": category,
             "name": dto.name,
             "year": dto.year,
             "duration_min": dto.duration_min,
@@ -42,4 +44,5 @@ def import_title_by_external_id(external_id: int, provider: MediaProvider) -> Ti
                     },
                 )
 
+    ensure_user_records(user, title)
     return title

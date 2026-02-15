@@ -6,6 +6,7 @@ from media.models import (
     FranchiseItem,
     Season,
     Title,
+    UserEpisodeState,
     UserProgress,
     UserTitleState,
 )
@@ -18,6 +19,7 @@ admin.site.register(
         Season,
         Episode,
         UserTitleState,
+        UserEpisodeState,
         UserProgress,
     ]
 )
