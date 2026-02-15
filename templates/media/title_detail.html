@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ title.name }}{% endblock %}
+{% block subtitle %}Карточка произведения{% endblock %}
+
+{% block content %}
+  <div class="two-col">
+    <div class="card">
+      {% if title.poster_url %}
+        <img class="poster" src="{{ title.poster_url }}" alt="{{ title.name }}">
+      {% else %}
+        <div class="poster"></div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <h1 style="margin:0 0 10px;">{{ title.name }}</h1>
+
+      <div class="meta" style="margin-bottom: 12px;">
+        <span class="pill">{% if title.type == "series" %}Сериал{% else %}Фильм{% endif %}</span>
+        {% if title.year %}<span class="pill">{{ title.year }}</span>{% endif %}
+        {% if title.duration_min %}<span class="pill">{{ title.duration_min }} мин</span>{% endif %}
+        {% if title.kp_id %}<span class="pill">KP {{ title.kp_id }}</span>{% endif %}
+      </div>
+
+      <div class="kv">
+        <div class="kv-row">
+          <span>Ссылка на КиноПоиск</span>
+          {% if title.kp_url %}
+            <a class="btn" style="padding:6px 10px;" href="{{ title.kp_url }}" target="_blank">Открыть</a>
+          {% else %}
+            <span class="muted">—</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if title.type == "series" %}
+        <h3 style="margin:18px 0 10px;">Сезоны</h3>
+
+        <div style="display:grid; gap:10px;">
+          {% for s in title.seasons.all %}
+            <div class="kv-row">
+              <span>Сезон {{ s.number }}</span>
+              <b>{% if s.episodes_count %}серий: {{ s.episodes_count }}{% else %}—{% endif %}</b>
+            </div>
+          {% empty %}
+            <div class="muted">Нет данных по сезонам.</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = _str_to_bool(os.getenv("DJANGO_DEBUGGER"))
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") or []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(" ") or []
 DJANGO_ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 INSTALLED_APPS = [
@@ -60,7 +60,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -107,3 +107,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/login/"

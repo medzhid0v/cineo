@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Cineo{% endblock %}</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #0b0b0f;
+      color: #e9e9ee;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11,11,15,.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1b1b24;
+    }
+
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 14px 16px; }
+    .row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap: wrap; }
+
+    .brand { font-weight: 750; letter-spacing: .2px; }
+    .muted { color:#a8a8b8; font-size: 13px; }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#171724;
+      border:1px solid #242437;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+    }
+    .btn:hover { border-color:#3a3a57; }
+
+    .content { padding: 18px 0 26px; }
+
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background:#10101a;
+      border:1px solid #1c1c2a;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+      transform: translateY(0);
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    .card:hover { transform: translateY(-2px); border-color:#2f2f46; }
+
+    .poster {
+      width:100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display:block;
+      background:#0e0e16;
+    }
+
+    .card-body { padding: 10px 12px 12px; }
+    .title { font-weight: 700; line-height: 1.2; margin: 4px 0 8px; }
+    .meta { display:flex; gap:8px; flex-wrap: wrap; }
+
+    .pill {
+      font-size: 12px;
+      color:#cfcfe0;
+      background:#141423;
+      border:1px solid #23233a;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .panel {
+      background:#10101a;
+      border:1px solid #1c1c2a;
+      border-radius:16px;
+      padding:16px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.25);
+    }
+
+    .input {
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid #2a2a3f;
+      background:#0f0f18;
+      color:#fff;
+      outline:none;
+    }
+
+    .two-col {
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 860px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    .kv { display:grid; gap: 10px; margin-top: 14px; }
+    .kv-row { display:flex; justify-content:space-between; gap: 12px; padding: 10px; border-radius: 12px; background:#0f0f18; border:1px solid #1c1c2a;}
+    .kv-row span { color:#9f9fb0; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap row">
+      <div>
+        <div class="brand">Watchlist</div>
+        <div class="muted">{% block subtitle %}Локальная библиотека{% endblock %}</div>
+      </div>
+
+      <div class="row">
+        <a class="btn" href="{% url 'media:list' %}">Главная</a>
+        <a class="btn" href="{% url 'media:import' %}">Импорт</a>
+        <a class="btn" href="{% url 'logout' %}">Выход</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap content">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
