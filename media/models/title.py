@@ -7,31 +7,67 @@ class TitleType(models.TextChoices):
 
 
 class Title(models.Model):
+    """
+    Базовая сущность медиакаталога (Title).
+
+    Представляет собой произведение — фильм или сериал.
+
+    Важно:
+        Title хранит только «контентные» данные.
+        Пользовательские данные (статусы, прогресс) должны храниться в отдельных моделях.
+    """
+
     type = models.CharField(
         max_length=16,
         choices=TitleType.choices,
         db_index=True,
         verbose_name="Тип",
     )
-
-    name = models.CharField(max_length=255)
-    year = models.PositiveSmallIntegerField(null=True, blank=True)
-
-    # Для фильмов — длительность фильма, для сериалов — можно хранить среднюю/типовую
-    duration_min = models.PositiveSmallIntegerField(null=True, blank=True)
-
-    poster_url = models.URLField(max_length=500, blank=True, default="")
-
-    kp_id = models.PositiveIntegerField(unique=True, null=True, blank=True)
-    kp_url = models.URLField(max_length=500, blank=True, default="")
+    name = models.CharField(
+        max_length=255,
+        verbose_name="Название",
+    )
+    year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Год",
+    )
+    duration_min = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Длительность",
+    )
+    poster_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default="",
+        verbose_name="Ссылка на постер",
+    )
+    kp_id = models.PositiveIntegerField(
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name="КиноПоиск ID",
+    )
+    kp_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default="",
+        verbose_name="КиноПоиск URL",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        verbose_name = "Произведение"
+        verbose_name_plural = "Произведения"
+        ordering = ["-year", "name"]
+
         indexes = [
             models.Index(fields=["type"]),
             models.Index(fields=["kp_id"]),
+            models.Index(fields=["year"]),
         ]
 
     def __str__(self) -> str:
