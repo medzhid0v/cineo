@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 {% block title %}Watchlist{% endblock %}
-{% block subtitle %}Все фильмы и сериалы{% endblock %}
+{% block subtitle %}Мой список{% endblock %}
 
 {% block content %}
   <div class="row" style="margin-bottom: 14px;">
     <div class="muted">Всего: {{ titles|length }}</div>
+    <div class="row">
+      <a class="btn" href="?">Все</a>
+      {% for value, label in categories %}
+        <a class="btn" href="?category={{ value }}">{{ label }}</a>
+      {% endfor %}
+    </div>
   </div>
 
   <div class="grid">
     {% for t in titles %}
+      {% with state=t.current_user_states.0 progress=t.current_user_progress.0 %}
       <a class="card" href="{% url 'media:detail' t.pk %}">
         {% if t.poster_url %}
           <img class="poster" src="{{ t.poster_url }}" alt="{{ t.name }}" loading="lazy">
@@ -18,13 +25,19 @@
 
         <div class="card-body">
           <div class="title">{{ t.name }}</div>
-          <div class="meta">
-            <span class="pill">{% if t.type == "series" %}Сериал{% else %}Фильм{% endif %}</span>
+          <div class="meta" style="margin-bottom:8px;">
+            <span class="pill">{{ t.get_type_display }}</span>
+            <span class="pill">{{ t.get_category_display }}</span>
             {% if t.year %}<span class="pill">{{ t.year }}</span>{% endif %}
-            {% if t.duration_min %}<span class="pill">{{ t.duration_min }} мин</span>{% endif %}
           </div>
+          {% if state %}<div class="muted">Статус: {{ state.get_status_display }}</div>{% endif %}
+          {% if state and state.rating is not None %}<div class="muted">Оценка: {{ state.rating }}/10</div>{% endif %}
+          {% if t.type == 'series' and progress and progress.current_season_number and progress.current_episode_number %}
+            <div class="muted">Прогресс: S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}</div>
+          {% endif %}
         </div>
       </a>
+      {% endwith %}
     {% empty %}
       <div class="panel">Пока нет произведений. Перейди в “Импорт” и добавь по KP ID.</div>
     {% endfor %}

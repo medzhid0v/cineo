@@ -11,6 +11,7 @@ class TitleDTO(BaseDTO):
     poster_url: str = ""
     source_url: str
     is_series: bool
+    category: str = "other"
 
     @field_validator("year", "duration_min", mode="before")
     @classmethod

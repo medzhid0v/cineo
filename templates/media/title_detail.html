@@ -14,39 +14,59 @@
 
     <div class="panel">
       <h1 style="margin:0 0 10px;">{{ title.name }}</h1>
-
       <div class="meta" style="margin-bottom: 12px;">
-        <span class="pill">{% if title.type == "series" %}Сериал{% else %}Фильм{% endif %}</span>
+        <span class="pill">{{ title.get_type_display }}</span>
+        <span class="pill">{{ title.get_category_display }}</span>
         {% if title.year %}<span class="pill">{{ title.year }}</span>{% endif %}
         {% if title.duration_min %}<span class="pill">{{ title.duration_min }} мин</span>{% endif %}
-        {% if title.kp_id %}<span class="pill">KP {{ title.kp_id }}</span>{% endif %}
       </div>
 
       <div class="kv">
-        <div class="kv-row">
-          <span>Ссылка на КиноПоиск</span>
-          {% if title.kp_url %}
-            <a class="btn" style="padding:6px 10px;" href="{{ title.kp_url }}" target="_blank">Открыть</a>
-          {% else %}
-            <span class="muted">—</span>
-          {% endif %}
-        </div>
+        <div class="kv-row"><span>КиноПоиск</span><a class="btn" href="{{ title.kp_url }}" target="_blank">Открыть</a></div>
+        {% if title.type == 'series' %}
+          <div class="kv-row"><span>Прогресс</span><b>{{ watched_episodes }}/{{ total_episodes }} эпизодов</b></div>
+          <div class="kv-row"><span>Текущий</span><b>{% if progress.current_season_number %}S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}{% else %}—{% endif %}</b></div>
+        {% endif %}
       </div>
 
-      {% if title.type == "series" %}
-        <h3 style="margin:18px 0 10px;">Сезоны</h3>
+      <h3 style="margin:18px 0 10px;">Моё</h3>
+      <form method="post" action="{% url 'media:update_state' title.pk %}" class="stack">
+        {% csrf_token %}
+        {{ state_form.status.label_tag }}{{ state_form.status }}
+        {{ state_form.rating.label_tag }}{{ state_form.rating }}
+        {{ state_form.review.label_tag }}{{ state_form.review }}
+        <button class="btn" type="submit">Сохранить</button>
+      </form>
 
-        <div style="display:grid; gap:10px;">
-          {% for s in title.seasons.all %}
-            <div class="kv-row">
-              <span>Сезон {{ s.number }}</span>
-              <b>{% if s.episodes_count %}серий: {{ s.episodes_count }}{% else %}—{% endif %}</b>
-            </div>
-          {% empty %}
-            <div class="muted">Нет данных по сезонам.</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <form method="post" action="{% url 'media:remove' title.pk %}" style="margin-top:12px;">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">Удалить из моего списка</button>
+      </form>
     </div>
   </div>
+
+  {% if title.type == 'series' %}
+    <div class="panel" style="margin-top: 16px;">
+      <h3 style="margin:0 0 12px;">Сезоны и эпизоды</h3>
+      {% for season in title.seasons.all %}
+        <h4>Сезон {{ season.number }}</h4>
+        <div class="stack" style="margin-bottom: 14px;">
+          {% for episode in season.episodes.all %}
+            <div class="kv-row">
+              <span>E{{ episode.number }} {{ episode.name|default:'Без названия' }}</span>
+              <form method="post" action="{% url 'media:toggle_episode' title.pk episode.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="watched" value="{% if episode.pk in watched_episode_ids %}0{% else %}1{% endif %}">
+                <button class="btn" type="submit">{% if episode.pk in watched_episode_ids %}✓ Просмотрено{% else %}Отметить{% endif %}</button>
+              </form>
+            </div>
+          {% empty %}
+            <div class="muted">Нет серий в сезоне.</div>
+          {% endfor %}
+        </div>
+      {% empty %}
+        <div class="muted">Нет данных по сезонам.</div>
+      {% endfor %}
+    </div>
+  {% endif %}
 {% endblock %}

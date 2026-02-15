@@ -6,6 +6,14 @@ class TitleType(models.TextChoices):
     SERIES = "series", "Series"
 
 
+class TitleCategory(models.TextChoices):
+    MOVIE = "movie", "Фильм"
+    SERIES = "series", "Сериал"
+    ANIME = "anime", "Аниме"
+    CARTOON = "cartoon", "Мультфильм"
+    OTHER = "other", "Другое"
+
+
 class Title(models.Model):
     """
     Базовая сущность медиакаталога (Title).
@@ -22,6 +30,13 @@ class Title(models.Model):
         choices=TitleType.choices,
         db_index=True,
         verbose_name="Тип",
+    )
+    category = models.CharField(
+        max_length=16,
+        choices=TitleCategory.choices,
+        default=TitleCategory.OTHER,
+        db_index=True,
+        verbose_name="Категория",
     )
     name = models.CharField(
         max_length=255,
