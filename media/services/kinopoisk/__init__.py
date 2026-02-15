@@ -1,7 +1,7 @@
 from .client import KinopoiskClient
 from .errors import (
-    KinopoiskError,
     KinopoiskAuthError,
+    KinopoiskError,
     KinopoiskHTTPError,
     KinopoiskParseError,
 )

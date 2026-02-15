@@ -1,13 +1,13 @@
 from django.contrib import admin
 
 from media.models import (
-    Title,
+    Episode,
     Franchise,
     FranchiseItem,
     Season,
-    Episode,
-    UserTitleState,
+    Title,
     UserProgress,
+    UserTitleState,
 )
 
 admin.site.register(

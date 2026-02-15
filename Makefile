@@ -27,3 +27,20 @@ su:
 	$(UV_RUN) $(PY) $(MANAGE) createsuperuser
 
 createsu: su
+
+# Форматирование кода (как black)
+format:
+	ruff format .
+
+# Проверка линтера
+lint:
+	ruff check .
+
+# Проверка форматирования (для CI)
+check:
+	ruff format . --check
+	ruff check .
+
+# Автофикс линтера
+fix:
+	ruff check . --fix

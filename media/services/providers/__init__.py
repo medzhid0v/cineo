@@ -1,4 +1,4 @@
-from .dtos import TitleDTO, SeasonsDTO, SeasonDTO, EpisodeDTO
+from .dtos import EpisodeDTO, SeasonDTO, SeasonsDTO, TitleDTO
 from .interfaces import MediaProvider
 
 __all__ = [

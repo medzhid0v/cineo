@@ -20,23 +20,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="title",
             name="duration_min",
-            field=models.PositiveSmallIntegerField(
-                blank=True, null=True, verbose_name="Длительность"
-            ),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Длительность"),
         ),
         migrations.AlterField(
             model_name="title",
             name="kp_id",
-            field=models.PositiveIntegerField(
-                blank=True, null=True, unique=True, verbose_name="КиноПоиск ID"
-            ),
+            field=models.PositiveIntegerField(blank=True, null=True, unique=True, verbose_name="КиноПоиск ID"),
         ),
         migrations.AlterField(
             model_name="title",
             name="kp_url",
-            field=models.URLField(
-                blank=True, default="", max_length=500, verbose_name="КиноПоиск URL"
-            ),
+            field=models.URLField(blank=True, default="", max_length=500, verbose_name="КиноПоиск URL"),
         ),
         migrations.AlterField(
             model_name="title",
@@ -46,9 +40,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="title",
             name="poster_url",
-            field=models.URLField(
-                blank=True, default="", max_length=500, verbose_name="Ссылка на постер"
-            ),
+            field=models.URLField(blank=True, default="", max_length=500, verbose_name="Ссылка на постер"),
         ),
         migrations.AlterField(
             model_name="title",
@@ -63,9 +55,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="title",
             name="year",
-            field=models.PositiveSmallIntegerField(
-                blank=True, null=True, verbose_name="Год"
-            ),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Год"),
         ),
         migrations.AddIndex(
             model_name="title",

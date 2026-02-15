@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from .dtos import TitleDTO, SeasonsDTO
+from .dtos import SeasonsDTO, TitleDTO
 
 
 class MediaProvider(Protocol):

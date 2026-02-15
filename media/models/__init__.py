@@ -1,8 +1,8 @@
-from .title import Title, TitleType
+from .episode import Episode
 from .franchise import Franchise, FranchiseItem
 from .season import Season
-from .episode import Episode
-from .user_state import UserTitleState, UserProgress, WatchStatus
+from .title import Title, TitleType
+from .user_state import UserProgress, UserTitleState, WatchStatus
 
 __all__ = [
     "Title",

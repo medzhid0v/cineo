@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import FormView, ListView, DetailView
+from django.views.generic import DetailView, FormView, ListView
 
 from media.forms import KinopoiskImportForm
 from media.models import Title

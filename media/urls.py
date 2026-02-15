@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import ImportView, TitleListView, TitleDetailView
+
+from .views import ImportView, TitleDetailView, TitleListView
 
 app_name = "media"
 
