@@ -128,7 +128,10 @@
       <div class="row">
         <a class="btn" href="{% url 'media:list' %}">Главная</a>
         <a class="btn" href="{% url 'media:import' %}">Импорт</a>
-        <a class="btn" href="{% url 'logout' %}">Выход</a>
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button class="btn" type="submit">Выход</button>
+        </form>
       </div>
     </div>
   </div>
