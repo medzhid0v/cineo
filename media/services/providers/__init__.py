@@ -1,10 +1,5 @@
-from .dtos import EpisodeDTO, SeasonDTO, SeasonsDTO, TitleDTO
-from .interfaces import MediaProvider
+from .base import MediaProvider
 
 __all__ = [
-    "TitleDTO",
-    "SeasonsDTO",
-    "SeasonDTO",
-    "EpisodeDTO",
     "MediaProvider",
 ]

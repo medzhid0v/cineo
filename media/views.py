@@ -6,7 +6,7 @@ from django.views.generic import DetailView, FormView, ListView
 from media.forms import KinopoiskImportForm
 from media.models import Title
 from media.services.importer import import_title_by_external_id
-from media.services.kinopoisk.provider import KinopoiskProvider
+from media.services.providers.kinopoisk import KinopoiskProvider
 
 
 class TitleListView(LoginRequiredMixin, ListView):

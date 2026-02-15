@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.db import transaction
 
 from media.models import Episode, Season, Title, TitleType
