@@ -1,5 +1,4 @@
 from .client import KinopoiskClient
-from .dtos import FilmDTO, SeasonsDTO, SeasonDTO, EpisodeDTO
 from .errors import (
     KinopoiskError,
     KinopoiskAuthError,
@@ -9,10 +8,6 @@ from .errors import (
 
 __all__ = [
     "KinopoiskClient",
-    "FilmDTO",
-    "SeasonsDTO",
-    "SeasonDTO",
-    "EpisodeDTO",
     "KinopoiskError",
     "KinopoiskAuthError",
     "KinopoiskHTTPError",

@@ -1,18 +1,18 @@
+from __future__ import annotations
+
 import os
-from datetime import date
 from typing import Any
 
 import httpx
 
-from .dtos import FilmDTO, SeasonsDTO, SeasonDTO, EpisodeDTO
 from .errors import KinopoiskAuthError, KinopoiskHTTPError, KinopoiskParseError
 
 
 class KinopoiskClient:
     """
-    Клиент для kinopoiskapiunofficial.tech.
+    Низкоуровневый HTTP-клиент для kinopoiskapiunofficial.tech.
 
-    Авторизация: заголовок X-API-KEY.
+    Возвращает "сырые" ответы (dict), без нормализации под доменные DTO.
     """
 
     BASE_URL = "https://kinopoiskapiunofficial.tech/api"
@@ -33,7 +33,7 @@ class KinopoiskClient:
         except httpx.RequestError as e:
             raise KinopoiskHTTPError(f"Request error: {e}") from e
 
-        if r.status_code == 401 or r.status_code == 403:
+        if r.status_code in (401, 403):
             raise KinopoiskAuthError(f"Auth error {r.status_code}: {r.text}")
         if r.status_code >= 400:
             raise KinopoiskHTTPError(f"HTTP error {r.status_code}: {r.text}")
@@ -43,88 +43,8 @@ class KinopoiskClient:
         except Exception as e:
             raise KinopoiskParseError(f"Invalid JSON: {e}") from e
 
-    @staticmethod
-    def _build_kp_url(kp_id: int) -> str:
-        return f"https://www.kinopoisk.ru/film/{kp_id}/"
+    def fetch_film(self, kp_id: int) -> dict[str, Any]:
+        return self._get(f"/v2.2/films/{kp_id}")
 
-    def get_film(self, kp_id: int) -> FilmDTO:
-        data = self._get(f"/v2.2/films/{kp_id}")
-
-        name = (
-            (data.get("nameRu") or "")
-            or (data.get("nameEn") or "")
-            or (data.get("nameOriginal") or "")
-        ).strip()
-
-        year = data.get("year")
-        duration_min = data.get("filmLength")
-        poster_url = (
-            data.get("posterUrl") or data.get("posterUrlPreview") or ""
-        ).strip()
-
-        api_type = (data.get("type") or "").upper()
-        is_series = bool(data.get("serial")) or api_type in {
-            "TV_SERIES",
-            "MINI_SERIES",
-            "TV_SHOW",
-        }
-
-        if not name:
-            name = f"KP#{kp_id}"
-
-        return FilmDTO(
-            kp_id=kp_id,
-            name=name,
-            year=int(year) if year else None,
-            duration_min=int(duration_min) if duration_min else None,
-            poster_url=poster_url,
-            kp_url=self._build_kp_url(kp_id),
-            is_series=is_series,
-        )
-
-    def get_seasons(self, kp_id: int) -> SeasonsDTO:
-        data = self._get(f"/v2.2/films/{kp_id}/seasons")
-
-        total = data.get("total")
-        items = data.get("items") or []
-        seasons: list[SeasonDTO] = []
-
-        for s in items:
-            season_num = s.get("number")
-            if not season_num:
-                continue
-
-            episodes_raw = s.get("episodes") or []
-            episodes: list[EpisodeDTO] = []
-
-            for ep in episodes_raw:
-                ep_num = ep.get("episodeNumber")
-                if not ep_num:
-                    continue
-
-                air_date = None
-                rd = ep.get("releaseDate")
-                if rd:
-                    try:
-                        air_date = date.fromisoformat(rd)
-                    except ValueError:
-                        air_date = None
-
-                ep_name = (ep.get("nameRu") or ep.get("nameEn") or "").strip()
-
-                episodes.append(
-                    EpisodeDTO(
-                        season_number=int(season_num),
-                        episode_number=int(ep_num),
-                        name=ep_name,
-                        duration_min=ep.get("duration"),
-                        air_date=air_date,
-                    )
-                )
-
-            seasons.append(SeasonDTO(number=int(season_num), episodes=episodes))
-
-        return SeasonsDTO(
-            total=int(total) if total else None,
-            seasons=seasons,
-        )
+    def fetch_seasons(self, kp_id: int) -> dict[str, Any]:
+        return self._get(f"/v2.2/films/{kp_id}/seasons")
