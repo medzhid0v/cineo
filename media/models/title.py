@@ -7,7 +7,12 @@ class TitleType(models.TextChoices):
 
 
 class Title(models.Model):
-    type = models.CharField(max_length=16, choices=TitleType.choices, db_index=True, verbose_name="Тип",)
+    type = models.CharField(
+        max_length=16,
+        choices=TitleType.choices,
+        db_index=True,
+        verbose_name="Тип",
+    )
 
     name = models.CharField(max_length=255)
     year = models.PositiveSmallIntegerField(null=True, blank=True)

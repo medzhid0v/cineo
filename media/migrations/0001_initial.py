@@ -4,29 +4,51 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Title',
+            name="Title",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type', models.CharField(choices=[('movie', 'Movie'), ('series', 'Series')], db_index=True, max_length=16)),
-                ('name', models.CharField(max_length=255)),
-                ('year', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('duration_min', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('poster_url', models.URLField(blank=True, default='', max_length=500)),
-                ('kp_id', models.PositiveIntegerField(blank=True, null=True, unique=True)),
-                ('kp_url', models.URLField(blank=True, default='', max_length=500)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[("movie", "Movie"), ("series", "Series")],
+                        db_index=True,
+                        max_length=16,
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("year", models.PositiveSmallIntegerField(blank=True, null=True)),
+                (
+                    "duration_min",
+                    models.PositiveSmallIntegerField(blank=True, null=True),
+                ),
+                ("poster_url", models.URLField(blank=True, default="", max_length=500)),
+                (
+                    "kp_id",
+                    models.PositiveIntegerField(blank=True, null=True, unique=True),
+                ),
+                ("kp_url", models.URLField(blank=True, default="", max_length=500)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'indexes': [models.Index(fields=['type'], name='media_title_type_11d631_idx'), models.Index(fields=['kp_id'], name='media_title_kp_id_fc1af5_idx')],
+                "indexes": [
+                    models.Index(fields=["type"], name="media_title_type_11d631_idx"),
+                    models.Index(fields=["kp_id"], name="media_title_kp_id_fc1af5_idx"),
+                ],
             },
         ),
     ]
