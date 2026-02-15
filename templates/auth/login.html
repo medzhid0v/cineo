@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+{% block subtitle %}Авторизация{% endblock %}
+
+{% block content %}
+  <div class="panel" style="max-width: 440px; margin: 24px auto;">
+    <h2 style="margin:0 0 12px;">Вход</h2>
+
+    <form method="post" class="stack">
+      {% csrf_token %}
+      {{ form.username.label_tag }}
+      <input class="input" type="text" name="username" required>
+      {{ form.password.label_tag }}
+      <input class="input" type="password" name="password" required>
+      <button class="btn" type="submit">Войти</button>
+    </form>
+    <p class="muted">Нет аккаунта? <a href="{% url 'signup' %}">Зарегистрируйтесь</a></p>
+  </div>
+{% endblock %}

@@ -26,9 +26,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "name",
-                    models.CharField(
-                        max_length=255, unique=True, verbose_name="Название франшизы"
-                    ),
+                    models.CharField(max_length=255, unique=True, verbose_name="Название франшизы"),
                 ),
                 (
                     "description",
@@ -58,9 +56,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "episodes_count",
-                    models.PositiveSmallIntegerField(
-                        blank=True, null=True, verbose_name="Количество серий"
-                    ),
+                    models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Количество серий"),
                 ),
                 (
                     "title",
@@ -105,9 +101,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "duration_min",
-                    models.PositiveSmallIntegerField(
-                        blank=True, null=True, verbose_name="Длительность (мин)"
-                    ),
+                    models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Длительность (мин)"),
                 ),
                 (
                     "air_date",
@@ -143,33 +137,23 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "position_seconds",
-                    models.PositiveIntegerField(
-                        blank=True, null=True, verbose_name="Позиция (сек)"
-                    ),
+                    models.PositiveIntegerField(blank=True, null=True, verbose_name="Позиция (сек)"),
                 ),
                 (
                     "current_season_number",
-                    models.PositiveSmallIntegerField(
-                        blank=True, null=True, verbose_name="Текущий сезон"
-                    ),
+                    models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Текущий сезон"),
                 ),
                 (
                     "current_episode_number",
-                    models.PositiveSmallIntegerField(
-                        blank=True, null=True, verbose_name="Текущая серия"
-                    ),
+                    models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Текущая серия"),
                 ),
                 (
                     "current_episode_position_seconds",
-                    models.PositiveIntegerField(
-                        blank=True, null=True, verbose_name="Позиция в серии (сек)"
-                    ),
+                    models.PositiveIntegerField(blank=True, null=True, verbose_name="Позиция в серии (сек)"),
                 ),
                 (
                     "last_watched_at",
-                    models.DateTimeField(
-                        blank=True, null=True, verbose_name="Последний просмотр"
-                    ),
+                    models.DateTimeField(blank=True, null=True, verbose_name="Последний просмотр"),
                 ),
                 (
                     "title",
@@ -223,9 +207,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "rating",
-                    models.PositiveSmallIntegerField(
-                        blank=True, null=True, verbose_name="Оценка"
-                    ),
+                    models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Оценка"),
                 ),
                 (
                     "review",
@@ -233,15 +215,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "started_at",
-                    models.DateField(
-                        blank=True, null=True, verbose_name="Дата начала просмотра"
-                    ),
+                    models.DateField(blank=True, null=True, verbose_name="Дата начала просмотра"),
                 ),
                 (
                     "finished_at",
-                    models.DateField(
-                        blank=True, null=True, verbose_name="Дата завершения"
-                    ),
+                    models.DateField(blank=True, null=True, verbose_name="Дата завершения"),
                 ),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
@@ -322,55 +300,37 @@ class Migration(migrations.Migration):
                     )
                 ],
                 "constraints": [
-                    models.UniqueConstraint(
-                        fields=("franchise", "title"), name="uq_franchise_title"
-                    ),
-                    models.UniqueConstraint(
-                        fields=("franchise", "order"), name="uq_franchise_order"
-                    ),
+                    models.UniqueConstraint(fields=("franchise", "title"), name="uq_franchise_title"),
+                    models.UniqueConstraint(fields=("franchise", "order"), name="uq_franchise_order"),
                 ],
             },
         ),
         migrations.AddIndex(
             model_name="season",
-            index=models.Index(
-                fields=["title", "number"], name="media_seaso_title_i_5b55a9_idx"
-            ),
+            index=models.Index(fields=["title", "number"], name="media_seaso_title_i_5b55a9_idx"),
         ),
         migrations.AddConstraint(
             model_name="season",
-            constraint=models.UniqueConstraint(
-                fields=("title", "number"), name="uq_title_season_number"
-            ),
+            constraint=models.UniqueConstraint(fields=("title", "number"), name="uq_title_season_number"),
         ),
         migrations.AddIndex(
             model_name="episode",
-            index=models.Index(
-                fields=["season", "number"], name="media_episo_season__b61abd_idx"
-            ),
+            index=models.Index(fields=["season", "number"], name="media_episo_season__b61abd_idx"),
         ),
         migrations.AddConstraint(
             model_name="episode",
-            constraint=models.UniqueConstraint(
-                fields=("season", "number"), name="uq_season_episode_number"
-            ),
+            constraint=models.UniqueConstraint(fields=("season", "number"), name="uq_season_episode_number"),
         ),
         migrations.AddConstraint(
             model_name="userprogress",
-            constraint=models.UniqueConstraint(
-                fields=("user", "title"), name="uq_user_title_progress"
-            ),
+            constraint=models.UniqueConstraint(fields=("user", "title"), name="uq_user_title_progress"),
         ),
         migrations.AddIndex(
             model_name="usertitlestate",
-            index=models.Index(
-                fields=["user", "status"], name="media_usert_user_id_40afa6_idx"
-            ),
+            index=models.Index(fields=["user", "status"], name="media_usert_user_id_40afa6_idx"),
         ),
         migrations.AddConstraint(
             model_name="usertitlestate",
-            constraint=models.UniqueConstraint(
-                fields=("user", "title"), name="uq_user_title_state"
-            ),
+            constraint=models.UniqueConstraint(fields=("user", "title"), name="uq_user_title_state"),
         ),
     ]

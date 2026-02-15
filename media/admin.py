@@ -1,13 +1,14 @@
 from django.contrib import admin
 
 from media.models import (
-    Title,
+    Episode,
     Franchise,
     FranchiseItem,
     Season,
-    Episode,
-    UserTitleState,
+    Title,
+    UserEpisodeState,
     UserProgress,
+    UserTitleState,
 )
 
 admin.site.register(
@@ -18,6 +19,7 @@ admin.site.register(
         Season,
         Episode,
         UserTitleState,
+        UserEpisodeState,
         UserProgress,
     ]
 )
