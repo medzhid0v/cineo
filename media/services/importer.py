@@ -1,21 +1,25 @@
+import logging
+
 from django.db import transaction
 
-from media.models import Episode, Season, Title, TitleCategory, TitleType
+from media.models import Episode, Season, Title, TitleCategory
 from media.services.providers import MediaProvider
 from media.services.user_state import ensure_user_records
+
+logger = logging.getLogger(__name__)
 
 
 @transaction.atomic
 def import_title_by_external_id(external_id: int, provider: MediaProvider, user) -> Title:
     dto = provider.get_title(external_id)
 
-    title_type = TitleType.SERIES if dto.is_series else TitleType.MOVIE
     category = dto.category if dto.category in TitleCategory.values else TitleCategory.OTHER
+    if category == "movie":
+        category = TitleCategory.FILM
 
     title, _ = Title.objects.update_or_create(
         kp_id=dto.external_id,
         defaults={
-            "type": title_type,
             "category": category,
             "name": dto.name,
             "year": dto.year,
@@ -25,7 +29,9 @@ def import_title_by_external_id(external_id: int, provider: MediaProvider, user)
         },
     )
 
-    if title.type == TitleType.SERIES:
+    logger.info("Импортирован тайтл kp_id=%s category=%s name=%s", dto.external_id, category, dto.name)
+
+    if title.is_series:
         seasons_dto = provider.get_seasons(external_id)
         for s in seasons_dto.seasons:
             season, _ = Season.objects.update_or_create(
@@ -45,4 +51,5 @@ def import_title_by_external_id(external_id: int, provider: MediaProvider, user)
                 )
 
     ensure_user_records(user, title)
+    logger.info("Созданы пользовательские записи user_id=%s title_id=%s", user.id, title.id)
     return title

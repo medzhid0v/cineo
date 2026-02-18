@@ -9,6 +9,10 @@ dependencies = [
     "httpx>=0.28.1",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
+    "celery>=5.4.0",
+    "redis>=5.2.1",
+    "psycopg[binary]>=3.2.3",
+    "flower>=2.0.1",
     "ruff>=0.15.1",
 ]
 
