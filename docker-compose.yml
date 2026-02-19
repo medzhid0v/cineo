@@ -1,8 +1,5 @@
 x-app-base: &app-base
   image: cineo-web
-  build:
-    context: .
-    dockerfile: Dockerfile
   volumes:
     - ./core:/app/core
     - ./media:/app/media
@@ -19,14 +16,17 @@ services:
   web:
     <<: *app-base
     container_name: cineo-web
-    command: uv run python manage.py runserver 0.0.0.0:8000
+    pull_policy: never
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8000"
 
   celery:
     <<: *app-base
     container_name: cineo-celery
-    command: uv run celery -A core worker -l info
+    command: celery -A core worker -l info
 
   postgres:
     container_name: cineo-postgres

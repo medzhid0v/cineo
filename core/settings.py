@@ -15,8 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-for-local-dev")
 DEBUG = _str_to_bool(os.getenv("DJANGO_DEBUGGER", "False"))
 
-ALLOWED_HOSTS = [host for host in os.getenv("ALLOWED_HOSTS", "").split(" ") if host] or ["*"]
-DJANGO_ALLOWED_HOSTS = [host for host in os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") if host]
+ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split() if h]
+CSRF_TRUSTED_ORIGINS = [o for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split() if o]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -100,6 +100,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
 
@@ -129,3 +130,5 @@ LOGGING = {
         "level": os.getenv("LOG_LEVEL", "INFO"),
     },
 }
+
+STATIC_ROOT = BASE_DIR / "staticfiles"

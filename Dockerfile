@@ -1,26 +1,42 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm
 
+# UID/GID для appuser (фиксированные для совместимости с volume mounts)
+ARG UID=1000
+ARG GID=1000
+
 ENV PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
-    UV_PYTHON=3.12.2
+    TZ=Europe/Moscow \
+    PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
-# Устанавливаем postgresql-client для проверки готовности БД
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    postgresql-client \
+    curl \
+    tzdata \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
+# Создание пользователя appuser
+RUN groupadd --gid ${GID} appuser \
+    && useradd --uid ${UID} --gid ${GID} --create-home --shell /bin/bash appuser \
+    && chown -R appuser:appuser /app
+
+# Установка таймзоны
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Установка зависимостей
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev
 
-COPY . .
+COPY --chown=appuser:appuser . .
 
-# Копируем и настраиваем entrypoint
-COPY entrypoint.sh /entrypoint.sh
+RUN mkdir -p /app/staticfiles && chown -R appuser:appuser /app/staticfiles
+
+COPY --chown=appuser:appuser entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

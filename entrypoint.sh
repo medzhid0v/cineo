@@ -1,30 +1,39 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-echo "Waiting for PostgreSQL to be ready..."
+# Определяем тип сервиса по команде
+COMMAND="$1"
 
-# Получаем параметры подключения из переменных окружения
-POSTGRES_HOST="${POSTGRES_HOST:-postgres}"
-POSTGRES_PORT="${POSTGRES_PORT:-5432}"
-POSTGRES_DB="${POSTGRES_DB:-cineo}"
-POSTGRES_USER="${POSTGRES_USER:-cineo}"
+init_web() {
+    echo "Initializing web service..."
 
-# Ждем готовности PostgreSQL
-until PGPASSWORD="${POSTGRES_PASSWORD}" psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c '\q' 2>/dev/null; do
-  echo "PostgreSQL is unavailable - sleeping"
-  sleep 1
-done
+    # Применяем миграции (от appuser через gosu)
+    # Для миграций нужно прямое подключение к БД, временно отключаем PgBouncer
+    echo "Running migrations (direct PostgreSQL connection)..."
+    gosu appuser python3 manage.py migrate
 
-echo "PostgreSQL is up - executing migrations"
+    # Собираем статику
+    gosu appuser python3 manage.py collectstatic --no-input --clear -v 0
+}
 
-# Применяем миграции
-uv run python manage.py migrate --noinput
+init_celery() {
+    echo "Initializing celery worker..."
+    # Ждём готовности Django
+    gosu appuser python3 -c "import django; django.setup()" 2>/dev/null || sleep 5
+}
 
-# Собираем статику только если это web сервис (определяем по команде)
-if echo "$@" | grep -q "runserver\|gunicorn\|uwsgi"; then
-  echo "Collecting static files..."
-  uv run python manage.py collectstatic --noinput || true
-fi
+# Выбираем инициализацию в зависимости от команды
+case "$COMMAND" in
+    python3|python|gunicorn|uwsgi)
+        init_web
+        ;;
+    celery)
+        init_celery
+        ;;
+    *)
+        echo "Running command: $@"
+        ;;
+esac
 
-echo "Starting command: $@"
-exec "$@"
+# Запускаем основной процесс от appuser
+exec gosu appuser "$@"
