@@ -1,0 +1,53 @@
+x-app-base: &app-base
+  image: cineo-web
+  volumes:
+    - ./core:/app/core
+    - ./media:/app/media
+    - ./templates:/app/templates
+  env_file:
+    - .env
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_started
+
+services:
+  web:
+    <<: *app-base
+    container_name: cineo-web
+    pull_policy: never
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8000"
+
+  celery:
+    <<: *app-base
+    container_name: cineo-celery
+    command: celery -A core worker -l info
+
+  postgres:
+    container_name: cineo-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cineo
+      POSTGRES_USER: cineo
+      POSTGRES_PASSWORD: cineo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cineo -d cineo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    container_name: cineo-redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

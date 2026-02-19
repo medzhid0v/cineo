@@ -1,19 +1,24 @@
 {% extends "base.html" %}
+{% load media_extras %}
 {% block title %}Watchlist{% endblock %}
 {% block subtitle %}Мой список{% endblock %}
 
 {% block content %}
   <div class="row" style="margin-bottom: 14px;">
     <div class="muted">Всего: {{ titles|length }}</div>
-    <div class="row">
+  </div>
+
+  <details class="filters panel" {% if category %}open{% endif %}>
+    <summary>Фильтры по категориям</summary>
+    <div class="row" style="margin-top: 12px; justify-content:flex-start;">
       <a class="btn" href="?">Все</a>
       {% for value, label in categories %}
         <a class="btn" href="?category={{ value }}">{{ label }}</a>
       {% endfor %}
     </div>
-  </div>
+  </details>
 
-  <div class="grid">
+  <div class="grid" style="margin-top: 14px;">
     {% for t in titles %}
       {% with state=t.current_user_states.0 progress=t.current_user_progress.0 %}
       <a class="card" href="{% url 'media:detail' t.pk %}">
@@ -25,15 +30,14 @@
 
         <div class="card-body">
           <div class="title">{{ t.name }}</div>
-          <div class="meta" style="margin-bottom:8px;">
-            <span class="pill">{{ t.get_type_display }}</span>
-            <span class="pill">{{ t.get_category_display }}</span>
-            {% if t.year %}<span class="pill">{{ t.year }}</span>{% endif %}
-          </div>
           {% if state %}<div class="muted">Статус: {{ state.get_status_display }}</div>{% endif %}
-          {% if state and state.rating is not None %}<div class="muted">Оценка: {{ state.rating }}/10</div>{% endif %}
-          {% if t.type == 'series' and progress and progress.current_season_number and progress.current_episode_number %}
-            <div class="muted">Прогресс: S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}</div>
+
+          {% if state and state.rating is not None %}
+            <div class="rating-stars">{{ state.rating|rating_stars }} {{ state.rating }}/10</div>
+          {% endif %}
+
+          {% if t.is_series and progress and progress.current_season_number and progress.current_episode_number %}
+            <div class="muted">Сейчас: S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}</div>
           {% endif %}
         </div>
       </a>

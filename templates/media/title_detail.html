@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load media_extras %}
 {% block title %}{{ title.name }}{% endblock %}
 {% block subtitle %}Карточка произведения{% endblock %}
 
@@ -15,7 +16,6 @@
     <div class="panel">
       <h1 style="margin:0 0 10px;">{{ title.name }}</h1>
       <div class="meta" style="margin-bottom: 12px;">
-        <span class="pill">{{ title.get_type_display }}</span>
         <span class="pill">{{ title.get_category_display }}</span>
         {% if title.year %}<span class="pill">{{ title.year }}</span>{% endif %}
         {% if title.duration_min %}<span class="pill">{{ title.duration_min }} мин</span>{% endif %}
@@ -23,7 +23,10 @@
 
       <div class="kv">
         <div class="kv-row"><span>КиноПоиск</span><a class="btn" href="{{ title.kp_url }}" target="_blank">Открыть</a></div>
-        {% if title.type == 'series' %}
+        {% if user_state.rating is not None %}
+          <div class="kv-row"><span>Моя оценка</span><b class="rating-stars">{{ user_state.rating|rating_stars }} {{ user_state.rating }}/10</b></div>
+        {% endif %}
+        {% if title.is_series %}
           <div class="kv-row"><span>Прогресс</span><b>{{ watched_episodes }}/{{ total_episodes }} эпизодов</b></div>
           <div class="kv-row"><span>Текущий</span><b>{% if progress.current_season_number %}S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}{% else %}—{% endif %}</b></div>
         {% endif %}
@@ -45,7 +48,7 @@
     </div>
   </div>
 
-  {% if title.type == 'series' %}
+  {% if title.is_series %}
     <div class="panel" style="margin-top: 16px;">
       <h3 style="margin:0 0 12px;">Сезоны и эпизоды</h3>
       {% for season in title.seasons.all %}

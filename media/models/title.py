@@ -1,13 +1,8 @@
 from django.db import models
 
 
-class TitleType(models.TextChoices):
-    MOVIE = "movie", "Movie"
-    SERIES = "series", "Series"
-
-
 class TitleCategory(models.TextChoices):
-    MOVIE = "movie", "Фильм"
+    FILM = "film", "Фильм"
     SERIES = "series", "Сериал"
     ANIME = "anime", "Аниме"
     CARTOON = "cartoon", "Мультфильм"
@@ -18,19 +13,13 @@ class Title(models.Model):
     """
     Базовая сущность медиакаталога (Title).
 
-    Представляет собой произведение — фильм или сериал.
+    Представляет собой произведение — фильм, сериал и др.
 
     Важно:
         Title хранит только «контентные» данные.
         Пользовательские данные (статусы, прогресс) должны храниться в отдельных моделях.
     """
 
-    type = models.CharField(
-        max_length=16,
-        choices=TitleType.choices,
-        db_index=True,
-        verbose_name="Тип",
-    )
     category = models.CharField(
         max_length=16,
         choices=TitleCategory.choices,
@@ -70,6 +59,11 @@ class Title(models.Model):
         default="",
         verbose_name="КиноПоиск URL",
     )
+    is_series = models.BooleanField(
+        default=False,
+        verbose_name="Сериал (есть сезоны/серии)",
+        help_text="Истина для сериалов и аниме-сериалов — подтягиваются сезоны и серии.",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -77,10 +71,10 @@ class Title(models.Model):
     class Meta:
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
-        ordering = ["-year", "name"]
+        ordering = ["-created_at"]
 
         indexes = [
-            models.Index(fields=["type"]),
+            models.Index(fields=["category"]),
             models.Index(fields=["kp_id"]),
             models.Index(fields=["year"]),
         ]
