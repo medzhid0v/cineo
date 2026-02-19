@@ -1,0 +1,25 @@
+# venv / caches
+.venv
+venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# vcs / ide
+.git/
+.idea/
+.vscode/
+
+# runtime junk
+.env
+db.sqlite3
+media/
+staticfiles/
+*.log
+
+# docker
+docker-compose.yml
