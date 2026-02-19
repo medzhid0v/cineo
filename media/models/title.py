@@ -59,6 +59,11 @@ class Title(models.Model):
         default="",
         verbose_name="КиноПоиск URL",
     )
+    is_series = models.BooleanField(
+        default=False,
+        verbose_name="Сериал (есть сезоны/серии)",
+        help_text="Истина для сериалов и аниме-сериалов — подтягиваются сезоны и серии.",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -76,7 +81,3 @@ class Title(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} ({self.year})" if self.year else self.name
-
-    @property
-    def is_series(self) -> bool:
-        return self.category == TitleCategory.SERIES

@@ -21,6 +21,7 @@ def import_title_by_external_id(external_id: int, provider: MediaProvider, user)
         kp_id=dto.external_id,
         defaults={
             "category": category,
+            "is_series": dto.is_series,
             "name": dto.name,
             "year": dto.year,
             "duration_min": dto.duration_min,
