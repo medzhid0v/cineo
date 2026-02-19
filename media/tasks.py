@@ -1,6 +1,6 @@
-import importlib.util
 import logging
 
+from celery import shared_task
 from django.contrib.auth import get_user_model
 
 from media.models import Episode, Title, UserEpisodeState, UserProgress, UserTitleState
@@ -9,14 +9,6 @@ from media.services.providers.kinopoisk import KinopoiskProvider
 from media.services.user_state import apply_user_state_form, ensure_user_records, toggle_episode_watched
 
 logger = logging.getLogger(__name__)
-
-if importlib.util.find_spec("celery"):
-    from celery import shared_task
-else:
-
-    def shared_task(func):
-        func.delay = func
-        return func
 
 
 @shared_task
