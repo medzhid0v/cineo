@@ -36,6 +36,12 @@
         {% csrf_token %}
         {{ state_form.status.label_tag }}{{ state_form.status }}
         {{ state_form.rating.label_tag }}{{ state_form.rating }}
+        {% if title.is_series %}
+          {{ state_form.started_at.label_tag }}{{ state_form.started_at }}
+          {{ state_form.finished_at.label_tag }}{{ state_form.finished_at }}
+        {% else %}
+          {{ state_form.finished_at.label_tag }}{{ state_form.finished_at }}
+        {% endif %}
         {{ state_form.review.label_tag }}{{ state_form.review }}
         <button class="btn" type="submit">Сохранить</button>
       </form>

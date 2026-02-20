@@ -6,9 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 
 from media.models import Title
-from media.tasks import (
-    remove_from_watchlist_task,
-)
+from media.tasks import remove_from_watchlist_task
 
 logger = logging.getLogger(__name__)
 

@@ -17,6 +17,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "celery-types>=0.24.0",
     "ruff>=0.15.1",
 ]
 

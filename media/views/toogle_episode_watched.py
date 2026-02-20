@@ -6,11 +6,10 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views import View
 
-from media.models import Episode, Title, UserEpisodeState
-from media.services.user_state import toggle_episode_watched
-from media.tasks import (
-    toggle_episode_watched_task,
-)
+from media.models import Episode, Title
+from media.tasks import toggle_episode_watched_task
+from media.usecases.get_title_detail import GetTitleDetailInput, GetTitleDetailUsecase
+from media.usecases.toggle_episode_watched import ToggleEpisodeWatchedInput, ToggleEpisodeWatchedUsecase
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,14 @@ class ToggleEpisodeWatchedView(LoginRequiredMixin, View):
 
         if is_ajax:
             # Для AJAX выполняем синхронно для немедленного ответа
-            toggle_episode_watched(user=request.user, episode=episode, watched=watched)
+            usecase = ToggleEpisodeWatchedUsecase()
+            usecase.execute(
+                ToggleEpisodeWatchedInput(
+                    user_id=request.user.id,
+                    episode_id=episode.id,
+                    watched=watched,
+                )
+            )
         else:
             # Для обычных запросов используем асинхронную задачу
             toggle_episode_watched_task.delay(user_id=request.user.id, episode_id=episode.id, watched=watched)
@@ -39,20 +45,20 @@ class ToggleEpisodeWatchedView(LoginRequiredMixin, View):
         )
 
         if is_ajax:
-            # Подсчитываем обновленные данные
-            watched_states = UserEpisodeState.objects.filter(
-                user=request.user,
-                episode__season__title=title,
-                watched=True,
+            # Подсчитываем обновленные данные через usecase
+            detail_usecase = GetTitleDetailUsecase()
+            result = detail_usecase.execute(
+                GetTitleDetailInput(
+                    user_id=request.user.id,
+                    title_id=title.id,
+                )
             )
-            watched_count = watched_states.count()
-            total_episodes = Episode.objects.filter(season__title=title).count()
 
             return JsonResponse(
                 {
                     "watched": watched,
-                    "watched_episodes": watched_count,
-                    "total_episodes": total_episodes,
+                    "watched_episodes": result.watched_episodes,
+                    "total_episodes": result.total_episodes,
                 }
             )
 

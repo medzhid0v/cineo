@@ -8,8 +8,8 @@
 
     <form method="post" id="import-form" style="display:grid; gap:10px;">
       {% csrf_token %}
-      <label class="muted" for="id_kp_id">КиноПоиск ID</label>
-      {{ form.kp_id }}
+      <label class="muted" for="id_source_id">КиноПоиск ID</label>
+      {{ form.source_id }}
       <button class="btn" type="submit">Импортировать</button>
     </form>
 
