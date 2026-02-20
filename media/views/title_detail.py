@@ -31,8 +31,6 @@ class TitleDetailView(LoginRequiredMixin, DetailView):
         )
 
         state_form = UpdateUserTitleStateForm(instance=result.user_state)
-        # Передаем информацию о типе тайтла в форму для условного отображения полей
-        state_form.title_is_series = title.is_series
 
         context.update(
             {

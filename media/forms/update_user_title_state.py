@@ -11,6 +11,16 @@ class UpdateUserTitleStateForm(forms.ModelForm):
         widget=forms.NumberInput(attrs={"class": "input", "min": 0, "max": 10}),
     )
 
+    started_at = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "input", "type": "date"}, format="%Y-%m-%d"),
+    )
+
+    finished_at = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "input", "type": "date"}, format="%Y-%m-%d"),
+    )
+
     class Meta:
         model = UserTitleState
         fields = ("status", "rating", "review", "started_at", "finished_at")
@@ -18,6 +28,4 @@ class UpdateUserTitleStateForm(forms.ModelForm):
             "status": forms.Select(attrs={"class": "input"}),
             "rating": forms.NumberInput(attrs={"class": "input", "min": 0, "max": 10}),
             "review": forms.Textarea(attrs={"class": "input", "rows": 5, "placeholder": "Ваш отзыв"}),
-            "started_at": forms.DateInput(attrs={"class": "input", "type": "date"}),
-            "finished_at": forms.DateInput(attrs={"class": "input", "type": "date"}),
         }

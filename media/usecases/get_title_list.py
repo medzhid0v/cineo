@@ -29,13 +29,17 @@ class GetTitleListUsecase(BaseUsecase[GetTitleListInput, GetTitleListOutput]):
 
         queryset = (
             Title.objects.filter(user_states__user_id=data.user_id)
-            .annotate(last_viewed_at=Max("user_progress__last_watched_at"))
+            .annotate(
+                last_viewed_at=Max("user_progress__last_watched_at"),
+                user_started_at=Max("user_states__started_at"),
+                user_finished_at=Max("user_states__finished_at"),
+            )
             .prefetch_related(
                 Prefetch("user_states", queryset=states, to_attr="current_user_states"),
                 Prefetch("user_progress", queryset=progress, to_attr="current_user_progress"),
             )
             .distinct()
-            .order_by("-created_at", "-last_viewed_at")
+            .order_by("-user_finished_at", "-user_started_at", "-created_at", "-last_viewed_at")
         )
 
         category = data.category if data.category in TitleCategory.values else ""

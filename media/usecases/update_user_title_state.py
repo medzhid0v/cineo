@@ -20,6 +20,8 @@ class UpdateUserTitleStateInput:
     review: str
     started_at: Optional[date] = None
     finished_at: Optional[date] = None
+    started_at_provided: bool = False
+    finished_at_provided: bool = False
 
 
 class UpdateUserTitleStateUsecase(BaseUsecase[UpdateUserTitleStateInput, UserTitleState]):
@@ -34,19 +36,35 @@ class UpdateUserTitleStateUsecase(BaseUsecase[UpdateUserTitleStateInput, UserTit
         user_state.rating = data.rating
         user_state.review = data.review
 
-        # started_at
-        if data.started_at is not None:
-            user_state.started_at = data.started_at
-        elif data.status == WatchStatus.WATCHING and not user_state.started_at:
-            user_state.started_at = timezone.localdate()
+        # Сохраняем текущие значения из БД перед возможными изменениями
+        current_started_at = user_state.started_at
+        current_finished_at = user_state.finished_at
 
-        # finished_at
-        if data.finished_at is not None:
+        # started_at: обновляем только если поле было явно передано в форме И значение изменилось
+        # Если поле не было в POST - оставляем текущее значение из БД
+        if data.started_at_provided:
+            # Поле было изменено пользователем - используем значение из формы (может быть None для очистки)
+            user_state.started_at = data.started_at
+        else:
+            # Поле не было изменено - оставляем текущее значение из БД
+            # Применяем автоматическую логику только если статус WATCHING и дата еще не установлена
+            if data.status == WatchStatus.WATCHING and not current_started_at:
+                user_state.started_at = timezone.localdate()
+            else:
+                user_state.started_at = current_started_at
+
+        # finished_at: аналогично для finished_at
+        if data.finished_at_provided:
             user_state.finished_at = data.finished_at
-        elif data.status == WatchStatus.COMPLETED and not user_state.finished_at:
-            user_state.finished_at = timezone.localdate()
+        else:
+            if data.status == WatchStatus.COMPLETED and not current_finished_at:
+                user_state.finished_at = timezone.localdate()
+            else:
+                user_state.finished_at = current_finished_at
 
         user_state.save(update_fields=["status", "rating", "review", "started_at", "finished_at", "updated_at"])
+        # Обновляем объект из БД, чтобы убедиться, что все значения синхронизированы
+        user_state.refresh_from_db()
 
     @transaction.atomic
     def execute(self, data: UpdateUserTitleStateInput) -> UserTitleState:
