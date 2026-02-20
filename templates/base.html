@@ -30,6 +30,15 @@
     .input { width:100%; padding:12px; border-radius:12px; border:1px solid #cfdcf8; background:#fff; color:#1a2033; outline:none; }
     .two-col { display:grid; grid-template-columns: 260px 1fr; gap: 18px; }
     @media (max-width: 860px) {.two-col { grid-template-columns: 1fr; }}
+    .three-col { display:grid; grid-template-columns: 260px 1fr 360px; gap: 18px; }
+    @media (max-width: 1200px) {.three-col { grid-template-columns: 260px 1fr; }}
+    @media (max-width: 860px) {.three-col { grid-template-columns: 1fr; }}
+    .status-badge { display:inline-block; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+    .status-planned { background: #eef3ff; color: #405079; border: 1px solid #cfddfa; }
+    .status-watching { background: #fff5e6; color: #8b6914; border: 1px solid #f5d896; }
+    .status-completed { background: #eef8f0; color: #235d31; border: 1px solid #b8e0c0; }
+    .status-dropped { background: #fff5f8; color: #8b2e3d; border: 1px solid #f0b9c4; }
+    .status-on_hold { background: #f5f0ff; color: #5a3d7a; border: 1px solid #d4c0e8; }
     .kv { display:grid; gap: 10px; margin-top: 14px; }
     .kv-row { display:flex; justify-content:space-between; gap: 12px; padding: 10px; border-radius: 12px; background:#f8faff; border:1px solid #dde7fd;}
     .kv-row span { color:#586588; }

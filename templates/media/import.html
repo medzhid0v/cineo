@@ -6,7 +6,7 @@
   <div class="panel" style="max-width: 560px; margin: 0 auto;">
     <h2 style="margin:0 0 12px;">Импорт</h2>
 
-    <form method="post" style="display:grid; gap:10px;">
+    <form method="post" id="import-form" style="display:grid; gap:10px;">
       {% csrf_token %}
       <label class="muted" for="id_kp_id">КиноПоиск ID</label>
       {{ form.kp_id }}
@@ -17,4 +17,40 @@
       Пример: для ссылки вида <span class="pill">/film/301/</span> ID будет <span class="pill">301</span>.
     </div>
   </div>
+
+  <script>
+    document.getElementById('import-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Импорт...';
+      
+      try {
+        const response = await fetch(e.target.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (response.ok) {
+          // Ждем 3 секунды и обновляем страницу
+          setTimeout(() => {
+            window.location.href = '{% url "media:list" %}';
+          }, 3000);
+          btn.textContent = 'Импорт запущен, перенаправление...';
+        } else {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      } catch (error) {
+        console.error('Ошибка при импорте:', error);
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+  </script>
 {% endblock %}
