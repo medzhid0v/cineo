@@ -12,16 +12,28 @@ def ensure_user_records(user, title: Title):
 
 
 @transaction.atomic
-def apply_user_state_form(user_state: UserTitleState, *, status: str, rating, review: str) -> UserTitleState:
+def apply_user_state_form(
+    user_state: UserTitleState,
+    *,
+    status: str,
+    rating,
+    review: str,
+    started_at=None,
+    finished_at=None,
+) -> UserTitleState:
     user_state.status = status
     user_state.rating = rating
     user_state.review = review
 
-    today = timezone.localdate()
-    if status == WatchStatus.WATCHING and not user_state.started_at:
-        user_state.started_at = today
-    if status == WatchStatus.COMPLETED and not user_state.finished_at:
-        user_state.finished_at = today
+    if started_at is not None:
+        user_state.started_at = started_at
+    elif status == WatchStatus.WATCHING and not user_state.started_at:
+        user_state.started_at = timezone.localdate()
+
+    if finished_at is not None:
+        user_state.finished_at = finished_at
+    elif status == WatchStatus.COMPLETED and not user_state.finished_at:
+        user_state.finished_at = timezone.localdate()
 
     user_state.save(update_fields=["status", "rating", "review", "started_at", "finished_at", "updated_at"])
     return user_state

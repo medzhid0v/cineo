@@ -30,15 +30,25 @@
 
         <div class="card-body">
           <div class="title">{{ t.name }}</div>
-          {% if state %}<div class="muted">Статус: {{ state.get_status_display }}</div>{% endif %}
+          <div class="card-meta">
+            <div>
+              {% if state %}
+                <span class="status-badge status-{{ state.status }}">{{ state.get_status_display }}</span>
+              {% endif %}
+            </div>
 
-          {% if state and state.rating is not None %}
-            <div class="rating-stars">{{ state.rating|rating_stars }} {{ state.rating }}/10</div>
-          {% endif %}
+            <div>
+              {% if state and state.rating is not None %}
+                <span class="rating-stars">{{ state.rating|rating_stars }} {{ state.rating }}/10</span>
+              {% endif %}
+            </div>
 
-          {% if t.is_series and progress and progress.current_season_number and progress.current_episode_number %}
-            <div class="muted">Сейчас: S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}</div>
-          {% endif %}
+            <div>
+              {% if t.is_series and progress and progress.current_season_number and progress.current_episode_number %}
+                <span class="muted">S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}</span>
+              {% endif %}
+            </div>
+          </div>
         </div>
       </a>
       {% endwith %}

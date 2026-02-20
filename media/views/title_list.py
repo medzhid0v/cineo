@@ -1,43 +1,41 @@
 import logging
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Max, Prefetch
 from django.views.generic import ListView
 
-from media.models import Title, TitleCategory, UserProgress, UserTitleState
+from media.usecases.get_title_list import GetTitleListInput, GetTitleListUsecase
 
 logger = logging.getLogger(__name__)
 
 
 class TitleListView(LoginRequiredMixin, ListView):
-    model = Title
+    model = None
     template_name = "media/title_list.html"
     context_object_name = "titles"
 
-    def get_queryset(self):
-        category = self.request.GET.get("category")
-        states = UserTitleState.objects.filter(user=self.request.user)
-        progress = UserProgress.objects.filter(user=self.request.user)
-
-        queryset = (
-            Title.objects.filter(user_states__user=self.request.user)
-            .annotate(last_viewed_at=Max("user_progress__last_watched_at"))
-            .prefetch_related(
-                Prefetch("user_states", queryset=states, to_attr="current_user_states"),
-                Prefetch("user_progress", queryset=progress, to_attr="current_user_progress"),
+    def get_usecase_result(self):
+        """Получает результат usecase один раз для использования в get_queryset и get_context_data."""
+        if not hasattr(self, "_usecase_result"):
+            usecase = GetTitleListUsecase()
+            self._usecase_result = usecase.execute(
+                GetTitleListInput(
+                    user_id=self.request.user.id,
+                    category=self.request.GET.get("category"),
+                )
             )
-            .distinct()
-            .order_by("-created_at", "-last_viewed_at")
-        )
+            logger.debug(
+                "Получен список произведений user_id=%s category=%s",
+                self.request.user.id,
+                self._usecase_result.category,
+            )
+        return self._usecase_result
 
-        if category in TitleCategory.values:
-            queryset = queryset.filter(category=category)
-
-        logger.debug("Получен список произведений user_id=%s category=%s", self.request.user.id, category)
-        return queryset
+    def get_queryset(self):
+        return self.get_usecase_result().queryset
 
     def get_context_data(self, **kwargs):
+        result = self.get_usecase_result()
         context = super().get_context_data(**kwargs)
-        context["category"] = self.request.GET.get("category", "")
-        context["categories"] = TitleCategory.choices
+        context["category"] = result.category
+        context["categories"] = result.categories
         return context
