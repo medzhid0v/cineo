@@ -6,6 +6,11 @@ from media.models import Episode, UserEpisodeState, UserProgress, UserTitleState
 
 @transaction.atomic
 def ensure_user_records(*, user_id: int, title_id: int) -> tuple[UserTitleState, UserProgress]:
+    """
+    Ensure that UserTitleState and UserProgress records exist
+    for the given user and title. Creates missing records if necessary
+    and returns both instances.
+    """
     user_state, _ = UserTitleState.objects.get_or_create(user_id=user_id, title_id=title_id)
     progress, _ = UserProgress.objects.get_or_create(user_id=user_id, title_id=title_id)
     return user_state, progress
