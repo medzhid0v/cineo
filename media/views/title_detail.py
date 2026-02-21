@@ -6,7 +6,7 @@ from django.views import View
 
 from media.forms import UpdateUserTitleStateForm
 from media.models import Title
-from media.usecases.get_title_detail import GetTitleDetailInput, GetTitleDetailUsecase
+from media.usecases.title import GetTitleDetailInput, GetTitleDetailUsecase
 
 logger = logging.getLogger(__name__)
 
