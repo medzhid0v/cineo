@@ -1,12 +1,12 @@
 from media.dtos import SeasonsDTO, TitleDTO
-from media.services.providers import MediaProvider
+from media.services.providers.base import BaseProvider
 
 from .client import KinopoiskClient
 from .parser import KinopoiskParser
 
 
 # === === === === === === ===
-class KinopoiskProvider(MediaProvider):
+class KinopoiskProvider(BaseProvider):
     source = "kinopoisk"
 
     # --- --- --- --- --- --- ---

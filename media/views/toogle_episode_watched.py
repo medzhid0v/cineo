@@ -8,7 +8,7 @@ from django.views import View
 
 from media.models import Episode, Title
 from media.tasks import toggle_episode_watched_task
-from media.usecases.get_title_detail import GetTitleDetailInput, GetTitleDetailUsecase
+from media.usecases.title.get_title_detail import GetTitleDetailInput, GetTitleDetailUsecase
 from media.usecases.toggle_episode_watched import ToggleEpisodeWatchedInput, ToggleEpisodeWatchedUsecase
 
 logger = logging.getLogger(__name__)

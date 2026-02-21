@@ -1,5 +1,5 @@
-from .base import MediaProvider
+from .kinopoisk import KinopoiskProvider
 
 __all__ = [
-    "MediaProvider",
+    "KinopoiskProvider",
 ]

@@ -26,7 +26,7 @@
       const originalText = btn.textContent;
       btn.disabled = true;
       btn.textContent = 'Импорт...';
-      
+
       try {
         const response = await fetch(e.target.action, {
           method: 'POST',
@@ -35,7 +35,7 @@
             'X-Requested-With': 'XMLHttpRequest'
           }
         });
-        
+
         if (response.ok) {
           // Ждем 3 секунды и обновляем страницу
           setTimeout(() => {

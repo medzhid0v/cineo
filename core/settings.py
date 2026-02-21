@@ -13,7 +13,7 @@ def _str_to_bool(value: str | None) -> bool:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-for-local-dev")
-DEBUG = _str_to_bool(os.getenv("DJANGO_DEBUGGER", "False"))
+DEBUG = _str_to_bool(os.getenv("DEBUG", "False"))
 
 ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split() if h]
 CSRF_TRUSTED_ORIGINS = [o for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split() if o]
@@ -57,24 +57,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-if os.getenv("POSTGRES_DB"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("POSTGRES_DB"),
-            "USER": os.getenv("POSTGRES_USER"),
-            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-            "HOST": os.getenv("POSTGRES_HOST", "postgres"),
-            "PORT": os.getenv("POSTGRES_PORT", "5432"),
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST", "postgres"),
+        "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -97,6 +90,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -129,6 +123,8 @@ LOGGING = {
         "handlers": ["console"],
         "level": os.getenv("LOG_LEVEL", "INFO"),
     },
+    "loggers": {
+        "httpx": {"level": "WARNING"},
+        "httpcore": {"level": "WARNING"},
+    },
 }
-
-STATIC_ROOT = BASE_DIR / "staticfiles"

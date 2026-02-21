@@ -5,8 +5,17 @@ DC        := docker compose
 
 .PHONY: run shell mm mig su createsu format lint check fix dev-up dev-down dev-logs docker-up docker-down docker-logs
 
+migrate:
+	$(UV_RUN) $(PY) $(MANAGE) migrate
+
+su:
+	$(UV_RUN) $(PY) $(MANAGE) createsuperuser
+
 run:
 	$(UV_RUN) $(PY) $(MANAGE) runserver 127.0.0.1:8000
+
+run_celery:
+	watchfiles "$(UV_RUN) celery -A core worker -l info --pool=solo" .
 
 shell:
 	$(UV_RUN) $(PY) $(MANAGE) shell
@@ -17,14 +26,6 @@ mm:
 	else \
 		$(UV_RUN) $(PY) $(MANAGE) makemigrations; \
 	fi
-
-mig:
-	$(UV_RUN) $(PY) $(MANAGE) migrate
-
-su:
-	$(UV_RUN) $(PY) $(MANAGE) createsuperuser
-
-createsu: su
 
 format:
 	ruff format .
