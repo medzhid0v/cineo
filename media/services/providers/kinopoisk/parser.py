@@ -2,6 +2,7 @@ from datetime import date
 from typing import Any
 
 from media.dtos import EpisodeDTO, SeasonDTO, SeasonsDTO, TitleDTO
+from media.models import TitleCategory
 
 
 class KinopoiskParser:
@@ -87,19 +88,20 @@ class KinopoiskParser:
         }
 
     @staticmethod
-    def _parse_category(data: dict[str, Any], is_series: bool) -> str:
+    def _parse_category(data: dict[str, Any], is_series: bool) -> TitleCategory:
         genres = {str(i.get("genre", "")).lower() for i in data.get("genres", [])}
         api_type = (data.get("type") or "").upper()
 
-        if "аниме" in genres or "anime" in genres or "ANIME" in api_type:
-            return "anime"
+        if "аниме" in genres or "anime" in genres or api_type == "ANIME":
+            return TitleCategory.ANIME
         if "мультфильм" in genres or "cartoon" in genres or "animated" in genres:
-            return "cartoon"
+            return TitleCategory.CARTOON
         if is_series:
-            return "series"
+            return TitleCategory.SERIES
         if api_type in {"FILM", "VIDEO"}:
-            return "movie"
-        return "other"
+            return TitleCategory.FILM
+
+        return TitleCategory.OTHER
 
     @staticmethod
     def _parse_int(value: Any) -> int | None:

@@ -13,12 +13,12 @@ logger = logging.getLogger(__name__)
     retry_jitter=True,
     max_retries=5,
 )
-def receive_title_task(*, source_id: int, user_id: int) -> None:
-    logger.info("ReceiveTitle started [user_id=%s source_id=%s]", user_id, source_id)
+def receive_title_task(*, source_id: int, user_id: int) -> dict:
     uc = ReceiveTitleUsecase()
-    uc.execute(
+    res = uc.execute(
         ReceiveTitleInput(
             user_id=user_id,
             source_id=source_id,
         )
     )
+    return res
