@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from django.contrib.auth import get_user_model
-
 from media.models import Episode, Title, UserEpisodeState, UserProgress, UserTitleState
 from media.services.user_state import ensure_user_records
 from media.usecases.base_usecase import BaseUsecase
@@ -27,20 +25,18 @@ class GetTitleDetailUsecase(BaseUsecase[GetTitleDetailInput, GetTitleDetailOutpu
     """Usecase для получения детальной информации о тайтле с данными пользователя."""
 
     def execute(self, data: GetTitleDetailInput) -> GetTitleDetailOutput:
-        user = get_user_model().objects.get(pk=data.user_id)
         title = Title.objects.prefetch_related("seasons__episodes").get(pk=data.title_id)
+        user_state, progress = ensure_user_records(user_id=data.user_id, title_id=title.id)
 
-        user_state, progress = ensure_user_records(user, title)
+        watched_ids = set(
+            UserEpisodeState.objects.filter(
+                user_id=data.user_id,
+                episode__season__title_id=title.id,
+                watched=True,
+            ).values_list("episode_id", flat=True)
+        )
 
-        watched_states = UserEpisodeState.objects.filter(
-            user_id=data.user_id,
-            episode__season__title=title,
-            watched=True,
-        ).select_related("episode")
-        watched_ids = set(watched_states.values_list("episode_id", flat=True))
-
-        episodes_qs = Episode.objects.filter(season__title=title)
-        total_episodes = episodes_qs.count()
+        total_episodes = Episode.objects.filter(season__title_id=title.id).count()
         watched_episodes = len(watched_ids)
 
         return GetTitleDetailOutput(

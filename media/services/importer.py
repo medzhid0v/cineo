@@ -51,6 +51,6 @@ def import_title_by_external_id(external_id: int, provider: MediaProvider, user)
                     },
                 )
 
-    ensure_user_records(user, title)
+    ensure_user_records(user_id=user.id, title_id=title.id)
     logger.info("Созданы пользовательские записи user_id=%s title_id=%s", user.id, title.id)
     return title

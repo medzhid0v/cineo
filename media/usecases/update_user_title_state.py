@@ -73,6 +73,6 @@ class UpdateUserTitleStateUsecase(BaseUsecase[UpdateUserTitleStateInput, UserTit
         user = get_user_model().objects.get(pk=data.user_id)
         title = Title.objects.get(pk=data.title_id)
 
-        user_state, _ = ensure_user_records(user, title)
+        user_state, _ = ensure_user_records(user_id=user.id, title_id=title.id)
         self._apply(user_state, data)
         return user_state

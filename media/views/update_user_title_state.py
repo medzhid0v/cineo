@@ -28,7 +28,7 @@ class UpdateUserTitleStateView(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         title = get_object_or_404(Title, pk=self.kwargs["pk"])
-        user_state, _ = ensure_user_records(self.request.user, title)
+        user_state, _ = ensure_user_records(user_id=self.request.user.id, title_id=title.id)
         # Обновляем из БД, чтобы получить актуальные значения
         user_state.refresh_from_db()
         kwargs["instance"] = user_state
