@@ -11,13 +11,20 @@ x-app-base: &app-base
 services:
   web:
     <<: *app-base
-    container_name: cineo-web
-    pull_policy: never
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8000"
+      - "8000:8000"
+    command: >
+      gunicorn core.wsgi:application
+      --bind 0.0.0.0:8000
+      --workers 2
+      --threads 4
+      --timeout 60
+      --access-logfile -
+      --error-logfile -
+      --log-level info
 
   celery:
     <<: *app-base

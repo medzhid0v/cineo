@@ -10,22 +10,50 @@
 - Управление коллекцией через веб-интерфейс
 - Полностью офлайн, приватность и контроль данных
 
-## Быстрый старт
-### Docker
+---
 
-```
+## Быстрый старт
+### Режим разработки (для разработчиков)
+
+```bash
 cp .env.example .env
 ```
 
 ```bash
-docker compose up --build
+make dev-docker-up
+make dev-migrate
+make dev-createsu
 ```
+
+Запустите приложение и celery worker в двух терминалах:
+
+```bash
+make dev-run
+```
+
+```bash
+make dev-celery-run
+```
+
+**Сервисы (DEV):**
+- Приложение: `http://127.0.0.1:8000`
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
+
+---
+
+### Production-like запуск (для пользователей)
+
+```bash
+cp .env.example .env
+docker compose up -d --build
+```
+
+Опционально создайте администратора:
 
 ```bash
 docker compose exec web python manage.py createsuperuser
 ```
 
-**Сервисы:**
-- Приложение: `http://localhost:8080`
-- PostgreSQL: `localhost:5432`
-- Redis: `localhost:6379`
+**Сервисы (Docker):**
+- Приложение: `http://localhost:8000`
