@@ -87,7 +87,7 @@
         const watched = btn.dataset.watched === '1';
         const formData = new FormData(form);
         formData.set('watched', watched ? '0' : '1');
-        
+
         try {
           const response = await fetch(form.action, {
             method: 'POST',
@@ -96,13 +96,13 @@
               'X-Requested-With': 'XMLHttpRequest'
             }
           });
-          
+
           if (response.ok) {
             const data = await response.json();
             btn.dataset.watched = data.watched ? '1' : '0';
             btn.textContent = data.watched ? '✓ Просмотрено' : 'Отметить';
             form.querySelector('input[name="watched"]').value = data.watched ? '0' : '1';
-            
+
             // Обновляем счетчики если они есть
             if (data.watched_episodes !== undefined && data.total_episodes !== undefined) {
               const progressCount = document.querySelector('.progress-count');
@@ -121,7 +121,7 @@
     document.querySelector('.remove-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!confirm('Удалить из списка?')) return;
-      
+
       const formData = new FormData(e.target);
       try {
         const response = await fetch(e.target.action, {
@@ -131,7 +131,7 @@
             'X-Requested-With': 'XMLHttpRequest'
           }
         });
-        
+
         if (response.ok) {
           window.location.href = '{% url "media:list" %}';
         }
