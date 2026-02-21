@@ -1,10 +1,6 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 def _str_to_bool(value: str | None) -> bool:
     return str(value).lower() in ("true", "1", "yes", "y")
