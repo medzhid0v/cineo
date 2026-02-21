@@ -12,6 +12,7 @@ dependencies = [
     "redis>=5.2.1",
     "psycopg[binary]>=3.2.3",
     "flower>=2.0.1",
+    "gunicorn>=25.1.0",
 ]
 
 [dependency-groups]

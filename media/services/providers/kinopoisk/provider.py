@@ -7,18 +7,18 @@ from .parser import KinopoiskParser
 
 # === === === === === === ===
 class KinopoiskProvider(BaseProvider):
-    source = "kinopoisk"
+    slug = "kinopoisk"
 
     # --- --- --- --- --- --- ---
-    def __init__(self, client: KinopoiskClient | None = None) -> None:
-        self.client = client or KinopoiskClient()
+    def __init__(self, client: KinopoiskClient) -> None:
+        self.client = client
 
     # --- --- --- --- --- --- ---
     def get_title(self, external_id: int) -> TitleDTO:
-        raw = self.client.fetch_film(external_id)
-        return KinopoiskParser.parse_title(raw, external_id)
+        data = self.client.fetch_film(external_id)
+        return KinopoiskParser.parse_title(data=data, external_id=external_id)
 
     # --- --- --- --- --- --- ---
     def get_seasons(self, external_id: int) -> SeasonsDTO:
-        raw = self.client.fetch_seasons(external_id)
-        return KinopoiskParser.parse_seasons(raw)
+        data = self.client.fetch_seasons(external_id)
+        return KinopoiskParser.parse_seasons(data=data)

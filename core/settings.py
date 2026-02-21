@@ -1,10 +1,6 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 def _str_to_bool(value: str | None) -> bool:
     return str(value).lower() in ("true", "1", "yes", "y")
@@ -12,6 +8,8 @@ def _str_to_bool(value: str | None) -> bool:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# === === === [Django] === === ===
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-for-local-dev")
 DEBUG = _str_to_bool(os.getenv("DEBUG", "False"))
 
@@ -63,11 +61,10 @@ DATABASES = {
         "NAME": os.getenv("POSTGRES_DB"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST", "postgres"),
+        "HOST": os.getenv("POSTGRES_HOST", "127.0.0.1"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -98,7 +95,8 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
+# === === === [Celery] === === ===
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://127.0.0.1:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -128,3 +126,6 @@ LOGGING = {
         "httpcore": {"level": "WARNING"},
     },
 }
+
+# === === === [PROVIDER API CONF] === === ===
+PROVIDER_API_KEY = os.getenv("PROVIDER_API_KEY")

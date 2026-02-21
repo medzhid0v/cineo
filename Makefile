@@ -1,61 +1,102 @@
+# =========================
+# Base commands / variables
+# =========================
+
 PY        := python
 MANAGE    := manage.py
 UV_RUN    := uv run
 DC        := docker compose
+DC_DEV    := docker compose -f docker-compose.dev.yml
 
-.PHONY: run shell mm mig su createsu format lint check fix dev-up dev-down dev-logs docker-up docker-down docker-logs
+# =========================
+# Env loading (DEV)
+# =========================
+# Переменные из .env подгружаем снаружи через python-dotenv CLI.
+#
+# Пример ручного запуска:
+#   uv run dotenv -f .env run -- python manage.py runserver
 
-migrate:
-	$(UV_RUN) $(PY) $(MANAGE) migrate
+DOTENV_FILE ?= .env
+DOTENV_RUN  := $(UV_RUN) dotenv -f $(DOTENV_FILE) run --
 
-su:
-	$(UV_RUN) $(PY) $(MANAGE) createsuperuser
+# =========================
+# Targets
+# =========================
 
-run:
-	$(UV_RUN) $(PY) $(MANAGE) runserver 127.0.0.1:8000
+.PHONY: \
+	dev-run dev-celery-run dev-makemig dev-migrate dev-createsu \
+	format lint check fix \
+	dev-docker-up dev-docker-down dev-docker-logs \
+	docker-up docker-down docker-logs
 
-run_celery:
-	watchfiles "$(UV_RUN) celery -A core worker -l info --pool=solo" .
 
-shell:
-	$(UV_RUN) $(PY) $(MANAGE) shell
+# =========================
+# Django (DEV) - local runserver/management via dotenv
+# =========================
 
-mm:
+dev-migrate:
+	$(DOTENV_RUN) $(UV_RUN) $(PY) $(MANAGE) migrate
+
+dev-createsu:
+	$(DOTENV_RUN) $(UV_RUN) $(PY) $(MANAGE) createsuperuser
+
+dev-run:
+	$(DOTENV_RUN) $(UV_RUN) $(PY) $(MANAGE) runserver 127.0.0.1:8000
+
+dev-makemig:
 	@if [ -n "$(app)" ]; then \
-		$(UV_RUN) $(PY) $(MANAGE) makemigrations $(app); \
+		$(DOTENV_RUN) $(UV_RUN) $(PY) $(MANAGE) makemigrations $(app); \
 	else \
-		$(UV_RUN) $(PY) $(MANAGE) makemigrations; \
+		$(DOTENV_RUN) $(UV_RUN) $(PY) $(MANAGE) makemigrations; \
 	fi
 
+
+# =========================
+# Celery (DEV) - auto-reload worker
+# =========================
+# watchfiles перезапускает worker при изменениях в проекте.
+
+dev-celery-run:
+	$(DOTENV_RUN) watchfiles "$(UV_RUN) celery -A core worker -l info --pool=solo" .
+
+
+# =========================
+# Code quality (local)
+# =========================
+# Ruff берёт настройки из pyproject.toml
+
 format:
-	ruff format .
+	$(UV_RUN) ruff format .
 
 lint:
-	ruff check .
+	$(UV_RUN) ruff check .
 
 check:
-	ruff format . --check
-	ruff check .
+	$(UV_RUN) ruff format . --check
+	$(UV_RUN) ruff check .
 
 fix:
-	ruff check . --fix
+	$(UV_RUN) ruff check . --fix
 
-# Локальная отладка с sqlite
-# 1) uv sync
-# 2) make mig
-# 3) make run
 
-# Запуск локальной docker-инфраструктуры (postgres + redis)
-dev-up:
-	$(DC) up -d db redis
+# =========================
+# Docker infra (DEV) - only Postgres + Redis
+# =========================
 
-dev-down:
-	$(DC) stop db redis
+dev-docker-up:
+	$(DC_DEV) up -d postgres redis
 
-dev-logs:
-	$(DC) logs -f db redis
+dev-docker-down:
+	$(DC_DEV) down postgres redis
 
-# Полный запуск приложения в docker (web + celery + flower + postgres + redis)
+dev-docker-logs:
+	$(DC_DEV) logs -f postgres redis
+
+
+# =========================
+# Docker full stack (PROD-like) - build and run everything
+# =========================
+
 docker-up:
 	$(DC) up --build
 
@@ -63,4 +104,4 @@ docker-down:
 	$(DC) down
 
 docker-logs:
-	$(DC) logs -f web celery flower db redis
+	$(DC) logs -f web celery
