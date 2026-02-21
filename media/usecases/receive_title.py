@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from media.services.importer import import_title_by_external_id
-from media.services.providers.kinopoisk import KinopoiskProvider
+from media.services.providers.factory import ProviderFactory
 from media.usecases.base_usecase import BaseUsecase
 
 
@@ -16,7 +16,8 @@ class ReceiveTitleUsecase(BaseUsecase[ReceiveTitleInput, None]):
         self,
         data: ReceiveTitleInput,
     ) -> None:
-        provider = KinopoiskProvider()
+        provider = ProviderFactory.init_provider("kinopoisk")
+
         import_title_by_external_id(
             external_id=data.source_id,
             provider=provider,

@@ -8,6 +8,8 @@ def _str_to_bool(value: str | None) -> bool:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# === === === [Django] === === ===
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-for-local-dev")
 DEBUG = _str_to_bool(os.getenv("DEBUG", "False"))
 
@@ -64,7 +66,6 @@ DATABASES = {
     }
 }
 
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -94,6 +95,7 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
 
+# === === === [Celery] === === ===
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -124,3 +126,6 @@ LOGGING = {
         "httpcore": {"level": "WARNING"},
     },
 }
+
+# === === === [PROVIDER API CONF] === === ===
+PROVIDER_API_KEY = os.getenv("PROVIDER_API_KEY")

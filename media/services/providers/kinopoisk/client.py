@@ -1,4 +1,3 @@
-import os
 from typing import Any
 
 import httpx
@@ -15,10 +14,11 @@ class KinopoiskClient:
 
     BASE_URL = "https://kinopoiskapiunofficial.tech/api"
 
-    def __init__(self, api_key: str | None = None, timeout: float = 15.0) -> None:
-        self.api_key = api_key or os.environ.get("KINOPOISK_API_KEY")
-        if not self.api_key:
-            raise KinopoiskAuthError("KINOPOISK_API_KEY is not set")
+    def __init__(self, api_key: str, timeout: float = 15.0) -> None:
+        if not api_key:
+            raise KinopoiskAuthError("API_KEY is not set")
+
+        self.api_key = api_key
         self.timeout = timeout
 
     def _get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
