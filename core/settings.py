@@ -13,7 +13,7 @@ def _str_to_bool(value: str | None) -> bool:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-for-local-dev")
-DEBUG = _str_to_bool(os.getenv("DJANGO_DEBUGGER", "False"))
+DEBUG = _str_to_bool(os.getenv("DEBUG", "False"))
 
 ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split() if h]
 CSRF_TRUSTED_ORIGINS = [o for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split() if o]
@@ -129,5 +129,9 @@ LOGGING = {
     "root": {
         "handlers": ["console"],
         "level": os.getenv("LOG_LEVEL", "INFO"),
+    },
+    "loggers": {
+        "httpx": {"level": "WARNING"},
+        "httpcore": {"level": "WARNING"},
     },
 }

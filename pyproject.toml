@@ -19,6 +19,7 @@ dependencies = [
 dev = [
     "celery-types>=0.24.0",
     "ruff>=0.15.1",
+    "watchfiles>=1.1.1",
 ]
 
 [tool.ruff]

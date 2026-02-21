@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(
-    bind=True,
     autoretry_for=(Exception,),
     retry_backoff=True,
     retry_jitter=True,

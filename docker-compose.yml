@@ -1,9 +1,5 @@
 x-app-base: &app-base
   image: cineo-web
-  volumes:
-    - ./core:/app/core
-    - ./media:/app/media
-    - ./templates:/app/templates
   env_file:
     - .env
   depends_on:
