@@ -3,14 +3,14 @@ import logging
 from django.db import transaction
 
 from media.models import Episode, Season, Title, TitleCategory
-from media.services.providers import MediaProvider
+from media.services.providers.base import BaseProvider
 from media.services.user_state import ensure_user_records
 
 logger = logging.getLogger(__name__)
 
 
 @transaction.atomic
-def import_title_by_external_id(*, external_id: int, provider: MediaProvider, user_id: int) -> Title:
+def import_title_by_external_id(*, external_id: int, provider: BaseProvider, user_id: int) -> Title:
     dto = provider.get_title(external_id)
 
     category = dto.category if dto.category in TitleCategory.values else TitleCategory.OTHER
@@ -52,5 +52,4 @@ def import_title_by_external_id(*, external_id: int, provider: MediaProvider, us
                 )
 
     ensure_user_records(user_id=user_id, title_id=title.id)
-    logger.info("Созданы пользовательские записи user_id=%s title_id=%s", user_id, title.id)
     return title

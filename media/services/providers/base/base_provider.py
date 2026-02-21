@@ -3,7 +3,7 @@ from typing import Protocol
 from media.dtos import SeasonsDTO, TitleDTO
 
 
-class MediaProvider(Protocol):
+class BaseProvider(Protocol):
     """
     Контракт для провайдеров метаданных (Kinopoisk/TMDB/и т.п.).
 
