@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Регистрация{% endblock %}
 {% block subtitle %}Создание аккаунта{% endblock %}
-
 {% block content %}
-  <div class="panel" style="max-width: 440px; margin: 24px auto;">
-    <h2 style="margin:0 0 12px;">Регистрация</h2>
-
-    <form method="post" class="stack">
-      {% csrf_token %}
-      {{ form.username.label_tag }}
-      {{ form.username }}
-      {{ form.password1.label_tag }}
-      {{ form.password1 }}
-      {{ form.password2.label_tag }}
-      {{ form.password2 }}
-      <button class="btn" type="submit">Создать аккаунт</button>
-    </form>
-  </div>
+    <div class="panel" style="max-width: 440px; margin: 24px auto;">
+        <h2 style="margin:0 0 12px;">Регистрация</h2>
+        <form method="post" class="stack">
+            {% csrf_token %}
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            <button class="btn" type="submit">Создать аккаунт</button>
+        </form>
+    </div>
 {% endblock %}

@@ -25,7 +25,7 @@ DOTENV_RUN  := $(UV_RUN) dotenv -f $(DOTENV_FILE) run --
 
 .PHONY: \
 	dev-run dev-celery-run dev-makemig dev-migrate dev-createsu \
-	format lint check fix \
+	format lint check fix lint_all \
 	dev-docker-up dev-docker-down dev-docker-logs \
 	docker-up docker-down docker-logs
 
@@ -78,6 +78,8 @@ check:
 fix:
 	$(UV_RUN) ruff check . --fix
 
+lint_all:
+	pre-commit run --all-files
 
 # =========================
 # Docker infra (DEV) - only Postgres + Redis

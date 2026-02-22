@@ -18,6 +18,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "celery-types>=0.24.0",
+    "djlint>=1.36.4",
     "pre-commit>=4.5.1",
     "python-dotenv>=1.2.1",
     "ruff>=0.15.1",
