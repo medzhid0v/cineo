@@ -5,6 +5,7 @@ from media.models import UserTitleState
 
 class UpdateUserTitleStateForm(forms.ModelForm):
     rating = forms.IntegerField(
+        label="Оценка",
         required=False,
         min_value=0,
         max_value=10,
@@ -12,11 +13,13 @@ class UpdateUserTitleStateForm(forms.ModelForm):
     )
 
     started_at = forms.DateField(
+        label="Дата начала просмотра",
         required=False,
         widget=forms.DateInput(attrs={"class": "input", "type": "date"}, format="%Y-%m-%d"),
     )
 
     finished_at = forms.DateField(
+        label="Дата завершения",
         required=False,
         widget=forms.DateInput(attrs={"class": "input", "type": "date"}, format="%Y-%m-%d"),
     )
