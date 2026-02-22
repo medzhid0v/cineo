@@ -27,7 +27,7 @@
         <div class="kv-row"><span>КиноПоиск</span><a class="btn" href="{{ title.kp_url }}" target="_blank">Открыть</a></div>
         {% if title.is_series %}
           <div class="kv-row progress-row"><span>Прогресс</span><b class="progress-count">{{ watched_episodes }}/{{ total_episodes }} эпизодов</b></div>
-          <div class="kv-row"><span>Текущий</span><b>{% if progress.current_season_number and progress.current_episode_number %}Сезон {{ progress.current_season_number }}, Серия {{ progress.current_episode_number }}{% else %}—{% endif %}</b></div>
+          <div class="kv-row"><span>Текущий</span><b class="current-episode">{% if progress.current_season_number and progress.current_episode_number %}Сезон {{ progress.current_season_number }}, Серия {{ progress.current_episode_number }}{% else %}—{% endif %}</b></div>
         {% endif %}
       </div>
     </div>

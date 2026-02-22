@@ -35,6 +35,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         progressCount.textContent = `${data.watched_episodes}/${data.total_episodes} эпизодов`;
                     }
                 }
+
+                const currentEpisode = document.querySelector(".current-episode");
+                if (currentEpisode) {
+                    if (data.current_season_number && data.current_episode_number) {
+                        currentEpisode.textContent =
+                            `Сезон ${data.current_season_number}, Серия ${data.current_episode_number}`;
+                    } else {
+                        currentEpisode.textContent = "—";
+                    }
+                }
             } catch (error) {
                 console.error("Ошибка при обновлении эпизода:", error);
             }

@@ -59,6 +59,8 @@ class ToggleEpisodeWatchedView(LoginRequiredMixin, View):
                     "watched": watched,
                     "watched_episodes": result.watched_episodes,
                     "total_episodes": result.total_episodes,
+                    "current_season_number": result.progress.current_season_number,
+                    "current_episode_number": result.progress.current_episode_number,
                 }
             )
 
