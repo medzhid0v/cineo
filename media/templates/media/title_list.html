@@ -45,7 +45,7 @@
 
             <div>
               {% if t.is_series and progress and progress.current_season_number and progress.current_episode_number %}
-                <span class="muted">S{{ progress.current_season_number|stringformat:'02d' }}E{{ progress.current_episode_number|stringformat:'02d' }}</span>
+                <span class="muted">Сезон {{ progress.current_season_number }}, Серия {{ progress.current_episode_number }}</span>
               {% endif %}
             </div>
           </div>
