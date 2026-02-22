@@ -1,90 +1,52 @@
+{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{% block title %}Cineo{% endblock %}</title>
-  <style>
-    :root { color-scheme: light; }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: #f5f7fc; color: #1a2033; font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-    a { color: inherit; text-decoration: none; }
-    .topbar { position: sticky; top: 0; z-index: 20; background: rgba(245,247,252,.95); backdrop-filter: blur(10px); border-bottom: 1px solid #dbe3f7; }
-    .wrap { max-width: 1320px; margin: 0 auto; padding: 14px 16px; }
-    .row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap: wrap; }
-    .brand { font-weight: 750; letter-spacing: .2px; }
-    .muted { color:#606b86; font-size: 13px; }
-    .btn { display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid #ccd8f5; color:#1a2033; padding:10px 12px; border-radius:12px; cursor:pointer; }
-    .btn:hover { border-color:#9bb4ee; }
-    .btn-danger { border-color:#f0b9c4; background:#fff5f8; }
-    .content { padding: 18px 0 26px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
-    .card { background:#ffffff; border:1px solid #d6e0f6; border-radius:16px; overflow:hidden; box-shadow: 0 6px 18px rgba(53, 74, 129, .10); transform: translateY(0); transition: transform .15s ease, border-color .15s ease; }
-    .card:hover { transform: translateY(-2px); border-color:#a7c0f2; }
-    .poster { width:100%; aspect-ratio: 2/3; object-fit: cover; display:block; background:#eaf0ff; }
-    .card-body { padding: 10px 12px 12px; display: flex; flex-direction: column; }
-    .title { font-weight: 700; line-height: 1.2; margin: 4px 0 8px; min-height: 2.4em; }
-    .card-meta { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
-    .card-meta > div { min-height: 28px; display: flex; align-items: center; }
-    .meta { display:flex; gap:8px; flex-wrap: wrap; }
-    .pill { font-size: 12px; color:#405079; background:#eef3ff; border:1px solid #cfddfa; padding: 4px 8px; border-radius: 999px; }
-    .panel { background:#ffffff; border:1px solid #d6e0f6; border-radius:16px; padding:16px; box-shadow: 0 6px 16px rgba(53, 74, 129, .08); }
-    .input { width:100%; padding:12px; border-radius:12px; border:1px solid #cfdcf8; background:#fff; color:#1a2033; outline:none; }
-    .two-col { display:grid; grid-template-columns: 260px 1fr; gap: 18px; }
-    @media (max-width: 860px) {.two-col { grid-template-columns: 1fr; }}
-    .three-col { display:grid; grid-template-columns: 260px 1fr 360px; gap: 18px; }
-    @media (max-width: 1200px) {.three-col { grid-template-columns: 260px 1fr; }}
-    @media (max-width: 860px) {.three-col { grid-template-columns: 1fr; }}
-    .status-badge { display:inline-block; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; }
-    .status-planned { background: #eef3ff; color: #405079; border: 1px solid #cfddfa; }
-    .status-watching { background: #fff5e6; color: #8b6914; border: 1px solid #f5d896; }
-    .status-completed { background: #eef8f0; color: #235d31; border: 1px solid #b8e0c0; }
-    .status-dropped { background: #fff5f8; color: #8b2e3d; border: 1px solid #f0b9c4; }
-    .status-on_hold { background: #f5f0ff; color: #5a3d7a; border: 1px solid #d4c0e8; }
-    .kv { display:grid; gap: 10px; margin-top: 14px; }
-    .kv-row { display:flex; justify-content:space-between; gap: 12px; padding: 10px; border-radius: 12px; background:#f8faff; border:1px solid #dde7fd;}
-    .kv-row span { color:#586588; }
-    .stack { display:grid; gap:10px; }
-    .rating-stars { color:#f2b01e; font-size: 14px; font-weight: 700; }
-    .flash { margin-bottom: 12px; padding: 10px 12px; background: #eef8f0; border: 1px solid #b8e0c0; border-radius: 12px; color: #235d31; }
-    details.filters { margin-top: 8px; }
-    details.filters summary { cursor: pointer; font-weight: 600; }
-  </style>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>{% block title %}Cineo{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script defer src="{% static 'js/base.js' %}"></script>
+
+    {% block head %}{% endblock %}
 </head>
 <body>
-  <div class="topbar">
+<div class="topbar">
     <div class="wrap row">
-      <div>
-        <div class="brand">Cineo Watchlist</div>
-        <div class="muted">{% block subtitle %}Локальная библиотека{% endblock %}</div>
-      </div>
+        <div>
+            <div class="brand">Cineo Watchlist</div>
+            <div class="muted">{% block subtitle %}Локальная библиотека{% endblock %}</div>
+        </div>
 
-      <div class="row">
-        {% if request.user.is_authenticated %}
-          <div class="row" style="gap: 8px;">
-            <a class="btn" href="{% url 'media:list' %}">Главная</a>
-            <a class="btn" href="{% url 'media:import' %}">Импорт</a>
-          </div>
-          <div style="width: 1px; height: 24px; background: #dbe3f7; margin: 0 8px;"></div>
-          <form method="post" action="{% url 'logout' %}" style="display:inline; margin: 0; padding: 0;">
-            {% csrf_token %}
-            <button class="btn" type="submit" style="margin: 0;">Выход</button>
-          </form>
-        {% else %}
-          <a class="btn" href="{% url 'login' %}">Вход</a>
-          <a class="btn" href="{% url 'signup' %}">Регистрация</a>
-        {% endif %}
-      </div>
+        <div class="row">
+            {% if request.user.is_authenticated %}
+                <div class="row" style="gap: 8px;">
+                    <a class="btn" href="{% url 'media:list' %}">Главная</a>
+                    <a class="btn" href="{% url 'media:import' %}">Импорт</a>
+                </div>
+                <div style="width: 1px; height: 24px; background: #dbe3f7; margin: 0 8px;"></div>
+                <form method="post" action="{% url 'logout' %}" style="display:inline; margin: 0; padding: 0;">
+                    {% csrf_token %}
+                    <button class="btn" type="submit" style="margin: 0;">Выход</button>
+                </form>
+            {% else %}
+                <a class="btn" href="{% url 'login' %}">Вход</a>
+                <a class="btn" href="{% url 'signup' %}">Регистрация</a>
+            {% endif %}
+        </div>
     </div>
-  </div>
+</div>
 
-  <div class="wrap content">
+<div class="wrap content">
     {% if messages %}
-      {% for message in messages %}
-        <div class="flash">{{ message }}</div>
-      {% endfor %}
+        {% for message in messages %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
     {% endif %}
     {% block content %}{% endblock %}
-  </div>
+</div>
+
+{% block scripts %}{% endblock %}
 </body>
 </html>
