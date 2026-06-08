@@ -15,15 +15,17 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+# NB: эти каталоги — артефакты Python-сборки в КОРНЕ репозитория. Якорим их
+# через ведущий "/", иначе они матчат и вложенные пути (например frontend/src/lib).
 .Python
-build/
+/build/
 develop-eggs/
-dist/
+/dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
