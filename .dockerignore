@@ -26,3 +26,5 @@ media/static_spa/
 
 # docker
 docker-compose.yml
+docker-compose.build.yml
+docker-compose.dev.yml

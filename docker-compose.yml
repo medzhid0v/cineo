@@ -1,7 +1,13 @@
+## Cineo — запуск из готового образа (GHCR). Локальная сборка не нужна.
+##   1) cp .env.example .env  и заполните значения
+##   2) docker compose up -d
+## Закрепить версию: CINEO_TAG=v0.1.0 в .env (по умолчанию latest).
+
 x-app-base: &app-base
-  image: cineo-web
+  image: ghcr.io/medzhid0v/cineo:${CINEO_TAG:-latest}
   env_file:
     - .env
+  restart: unless-stopped
   depends_on:
     postgres:
       condition: service_healthy
@@ -11,9 +17,6 @@ x-app-base: &app-base
 services:
   web:
     <<: *app-base
-    build:
-      context: .
-      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     command: >
@@ -34,6 +37,7 @@ services:
   postgres:
     container_name: cineo-postgres
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: cineo
       POSTGRES_USER: cineo
@@ -49,6 +53,7 @@ services:
   redis:
     container_name: cineo-redis
     image: redis:7-alpine
+    restart: unless-stopped
 
 volumes:
   postgres_data:

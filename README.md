@@ -63,16 +63,17 @@ make dev-front
 
 ---
 
-### 2) Production-like запуск (для пользователей)
+### 2) Запуск для пользователей (готовый образ)
 
-Подход: весь стек (web + celery + postgres + redis) запускается через Docker Compose.
+Локальная сборка **не нужна** — образ публикуется в GitHub Container Registry и тянется автоматически. Нужен только Docker Compose.
 
 ```bash
-cp .env.example .env
-docker compose up -d --build
+# понадобится только эти два файла + .env
+cp .env.example .env       # заполните SECRET_KEY и PROVIDER_API_KEY
+docker compose up -d
 ```
 
-Опционально создайте администратора:
+Миграции и сборка статики выполняются автоматически при старте. Опционально создайте администратора:
 
 ```bash
 docker compose exec web python manage.py createsuperuser
@@ -80,6 +81,10 @@ docker compose exec web python manage.py createsuperuser
 
 **Сервисы (Docker):**
 - Приложение: `http://localhost:8000`
+
+> Закрепить версию образа: задайте `CINEO_TAG=v0.1.0` в `.env` (по умолчанию `latest`).
+> Собрать образ из исходников локально (для разработки):
+> `docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build` (или `make docker-build`).
 
 ---
 

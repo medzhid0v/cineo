@@ -28,7 +28,7 @@ DOTENV_RUN  := $(UV_RUN) dotenv -f $(DOTENV_FILE) run --
 	format lint check fix \
 	front-install dev-front build-front \
 	dev-docker-up dev-docker-down dev-docker-logs \
-	docker-up docker-down docker-logs
+	docker-up docker-build docker-down docker-logs
 
 
 # =========================
@@ -111,11 +111,18 @@ dev-docker-logs:
 
 
 # =========================
-# Docker full stack (PROD-like) - build and run everything
+# Docker full stack - run from prebuilt GHCR image
 # =========================
+# docker-up тянет опубликованный образ (сборка не нужна).
+# docker-build собирает образ локально (для разработки/проверки).
+
+DC_BUILD := $(DC) -f docker-compose.yml -f docker-compose.build.yml
 
 docker-up:
-	$(DC) up --build
+	$(DC) up -d
+
+docker-build:
+	$(DC_BUILD) up -d --build
 
 docker-down:
 	$(DC) down
