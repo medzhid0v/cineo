@@ -1,3 +1,10 @@
+# Frontend (Cineo SPA)
+frontend/node_modules/
+media/static_spa/
+
+# Agent guidance (local only)
+CLAUDE.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
