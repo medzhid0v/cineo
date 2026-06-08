@@ -22,3 +22,8 @@ class ProviderFactory:
             return cls._registry[slug]()
         except KeyError:
             raise ValueError(f"Unknown provider slug: {slug}")
+
+    @classmethod
+    def default(cls) -> BaseProvider:
+        """Возвращает провайдер по умолчанию из настроек (settings.DEFAULT_PROVIDER)."""
+        return cls.init_provider(settings.DEFAULT_PROVIDER)

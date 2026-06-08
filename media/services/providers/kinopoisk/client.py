@@ -46,3 +46,6 @@ class KinopoiskClient:
 
     def fetch_seasons(self, kp_id: int) -> dict[str, Any]:
         return self._get(f"/v2.2/films/{kp_id}/seasons")
+
+    def search_by_keyword(self, keyword: str, page: int = 1) -> dict[str, Any]:
+        return self._get("/v2.1/films/search-by-keyword", params={"keyword": keyword, "page": page})

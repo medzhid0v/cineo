@@ -4,10 +4,12 @@ from media.models import (
     Episode,
     Franchise,
     FranchiseItem,
+    ProviderPayload,
     Season,
     Title,
     UserEpisodeState,
     UserProgress,
+    UserTablePreferences,
     UserTitleState,
 )
 
@@ -64,6 +66,19 @@ class UserProgressAdmin(admin.ModelAdmin):
         "last_watched_at",
     )
     search_fields = ("user__username", "title__name")
+
+
+@admin.register(ProviderPayload)
+class ProviderPayloadAdmin(admin.ModelAdmin):
+    list_display = ("provider", "kind", "external_id", "query", "fetched_at")
+    list_filter = ("provider", "kind")
+    search_fields = ("external_id", "query")
+    ordering = ("-fetched_at",)
+
+
+@admin.register(UserTablePreferences)
+class UserTablePreferencesAdmin(admin.ModelAdmin):
+    list_display = ("user", "view_mode", "page_size", "updated_at")
 
 
 admin.site.register(Franchise)

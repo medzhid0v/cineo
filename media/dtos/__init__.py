@@ -1,3 +1,4 @@
+from .search import SearchResultDTO, SearchResultsDTO
 from .series import EpisodeDTO, SeasonDTO, SeasonsDTO
 from .title import TitleDTO
 
@@ -6,4 +7,6 @@ __all__ = [
     "SeasonsDTO",
     "SeasonDTO",
     "EpisodeDTO",
+    "SearchResultDTO",
+    "SearchResultsDTO",
 ]

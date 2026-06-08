@@ -1,8 +1,10 @@
 from datetime import date
 from typing import Any
 
-from media.dtos import EpisodeDTO, SeasonDTO, SeasonsDTO, TitleDTO
+from media.dtos import EpisodeDTO, SearchResultDTO, SearchResultsDTO, SeasonDTO, SeasonsDTO, TitleDTO
 from media.models import TitleCategory
+
+_SERIES_TYPES = {"TV_SERIES", "MINI_SERIES", "TV_SHOW", "ANIME_SERIES"}
 
 
 class KinopoiskParser:
@@ -28,6 +30,19 @@ class KinopoiskParser:
             source_url=KinopoiskParser._build_kp_url(external_id),
             is_series=is_series,
             category=KinopoiskParser._parse_category(data, is_series),
+            original_name=data.get("nameOriginal") or "",
+            description=data.get("description") or "",
+            short_description=data.get("shortDescription") or "",
+            slogan=data.get("slogan") or "",
+            imdb_id=data.get("imdbId") or "",
+            rating_kp=KinopoiskParser._parse_float(data.get("ratingKinopoisk")),
+            rating_imdb=KinopoiskParser._parse_float(data.get("ratingImdb")),
+            age_limit=data.get("ratingAgeLimits") or "",
+            genres=KinopoiskParser._parse_names(data.get("genres"), key="genre"),
+            countries=KinopoiskParser._parse_names(data.get("countries"), key="country"),
+            cover_url=(data.get("coverUrl") or data.get("logoUrl") or ""),
+            start_year=KinopoiskParser._parse_int(data.get("startYear")),
+            end_year=KinopoiskParser._parse_int(data.get("endYear")),
         )
 
     @staticmethod
@@ -63,6 +78,41 @@ class KinopoiskParser:
             seasons.append(SeasonDTO(number=season_number, episodes=episodes))
 
         return SeasonsDTO(total=total, seasons=seasons)
+
+    @staticmethod
+    def parse_search(data: dict[str, Any]) -> SearchResultsDTO:
+        total = KinopoiskParser._parse_int(data.get("searchFilmsCountResult")) or 0
+        films = data.get("films") or []
+
+        results: list[SearchResultDTO] = []
+        for f in films:
+            film_id = KinopoiskParser._parse_int(f.get("filmId"))
+            if not film_id:
+                continue
+
+            name = ((f.get("nameRu") or "") or (f.get("nameEn") or "")).strip() or f"KP#{film_id}"
+            api_type = (f.get("type") or "").upper()
+
+            results.append(
+                SearchResultDTO(
+                    external_id=film_id,
+                    name=name,
+                    year=KinopoiskParser._parse_search_year(f.get("year")),
+                    poster_url=(f.get("posterUrlPreview") or f.get("posterUrl") or ""),
+                    is_series=api_type in _SERIES_TYPES,
+                    rating=KinopoiskParser._parse_float(f.get("rating")),
+                    description=f.get("description") or "",
+                )
+            )
+
+        return SearchResultsDTO(total=total, results=results)
+
+    @staticmethod
+    def _parse_search_year(value: Any) -> int | None:
+        # В поиске year иногда приходит диапазоном "2019-2021" — берём первый год.
+        if isinstance(value, str) and "-" in value:
+            value = value.split("-", 1)[0]
+        return KinopoiskParser._parse_int(value)
 
     @staticmethod
     def _parse_name(data: dict[str, Any], external_id: int) -> str:
@@ -109,6 +159,28 @@ class KinopoiskParser:
             return int(value) if value is not None else None
         except (TypeError, ValueError):
             return None
+
+    @staticmethod
+    def _parse_float(value: Any) -> float | None:
+        if value in (None, ""):
+            return None
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _parse_names(items: Any, *, key: str) -> list[str]:
+        """Извлекает список названий из структуры вида [{genre: 'драма'}, ...]."""
+        if not isinstance(items, list):
+            return []
+        result: list[str] = []
+        for item in items:
+            if isinstance(item, dict):
+                value = str(item.get(key, "")).strip()
+                if value:
+                    result.append(value)
+        return result
 
     @staticmethod
     def _parse_date(value: Any) -> date | None:

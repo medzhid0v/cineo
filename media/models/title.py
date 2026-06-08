@@ -65,6 +65,83 @@ class Title(models.Model):
         help_text="Истина для сериалов и аниме-сериалов — подтягиваются сезоны и серии.",
     )
 
+    # === Расширенные метаданные (из провайдера) ===
+    original_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        verbose_name="Оригинальное название",
+    )
+    description = models.TextField(
+        blank=True,
+        default="",
+        verbose_name="Описание",
+    )
+    short_description = models.TextField(
+        blank=True,
+        default="",
+        verbose_name="Краткое описание",
+    )
+    slogan = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+        verbose_name="Слоган",
+    )
+    imdb_id = models.CharField(
+        max_length=32,
+        blank=True,
+        default="",
+        db_index=True,
+        verbose_name="IMDb ID",
+    )
+    rating_kp = models.FloatField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name="Рейтинг КиноПоиск",
+    )
+    rating_imdb = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Рейтинг IMDb",
+    )
+    age_limit = models.CharField(
+        max_length=16,
+        blank=True,
+        default="",
+        verbose_name="Возрастное ограничение",
+        help_text="Например: age16, age18.",
+    )
+    genres = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Жанры",
+        help_text="Список названий жанров.",
+    )
+    countries = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Страны",
+        help_text="Список названий стран.",
+    )
+    cover_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default="",
+        verbose_name="Обложка (широкая)",
+    )
+    start_year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Год начала (сериал)",
+    )
+    end_year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Год окончания (сериал)",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -186,3 +186,44 @@ class UserEpisodeState(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} — {self.episode}"
+
+
+class UserTablePreferences(models.Model):
+    """
+    Персональные настройки табличного представления библиотеки.
+
+    Хранит список видимых колонок и их порядок. Одна запись на пользователя.
+    Настройки синхронизируются между устройствами (в отличие от localStorage).
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="table_preferences",
+        verbose_name="Пользователь",
+    )
+    visible_columns = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Видимые колонки",
+        help_text="Список ключей колонок в порядке отображения.",
+    )
+    page_size = models.PositiveSmallIntegerField(
+        default=50,
+        verbose_name="Размер страницы",
+    )
+    view_mode = models.CharField(
+        max_length=16,
+        default="table",
+        verbose_name="Режим отображения",
+        help_text="table | grid",
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Настройки таблицы"
+        verbose_name_plural = "Настройки таблицы"
+
+    def __str__(self) -> str:
+        return f"{self.user} — настройки таблицы"
