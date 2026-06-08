@@ -26,6 +26,7 @@ DOTENV_RUN  := $(UV_RUN) dotenv -f $(DOTENV_FILE) run --
 .PHONY: \
 	dev-run dev-celery-run dev-makemig dev-migrate dev-createsu \
 	format lint check fix \
+	front-install dev-front build-front \
 	dev-docker-up dev-docker-down dev-docker-logs \
 	docker-up docker-down docker-logs
 
@@ -77,6 +78,22 @@ check:
 
 fix:
 	$(UV_RUN) ruff check . --fix
+
+
+# =========================
+# Frontend (React SPA, Vite)
+# =========================
+# dev-front поднимает Vite dev-сервер на :5173 с проксированием /api на Django (:8000).
+# Для разработки фронта запусти параллельно: make dev-run (Django) и make dev-front (Vite).
+
+front-install:
+	cd frontend && npm install
+
+dev-front:
+	cd frontend && npm run dev
+
+build-front:
+	cd frontend && npm run build
 
 
 # =========================

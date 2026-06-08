@@ -20,5 +20,9 @@ db.sqlite3
 staticfiles/
 *.log
 
+# frontend: node_modules не нужен; SPA собирается отдельной стадией и кладётся через COPY --from
+frontend/node_modules/
+media/static_spa/
+
 # docker
 docker-compose.yml
