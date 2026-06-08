@@ -18,7 +18,7 @@ class ReceiveTitleUsecase(BaseUsecase[ReceiveTitleInput, dict[str, Any]]):
         self,
         data: ReceiveTitleInput,
     ) -> dict[str, Any]:
-        provider = ProviderFactory.init_provider("kinopoisk")
+        provider = ProviderFactory.default()
 
         title_dto = provider.get_title(external_id=data.source_id)
 

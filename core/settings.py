@@ -23,11 +23,25 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "media",
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 50,
+}
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # WhiteNoise отдаёт статику (включая собранный React SPA) в проде.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -89,6 +103,17 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Каталог собранного React SPA (vite build, base="/static/").
+SPA_DIR = BASE_DIR / "media" / "static_spa"
+SPA_INDEX = SPA_DIR / "index.html"
+STATICFILES_DIRS = [SPA_DIR] if SPA_DIR.exists() else []
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    # Vite сам хэширует имена ассетов — используем сжатие без manifest-переименования.
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+}
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/login/"
@@ -129,3 +154,4 @@ LOGGING = {
 
 # === === === [PROVIDER API CONF] === === ===
 PROVIDER_API_KEY = os.getenv("PROVIDER_API_KEY")
+DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "kinopoisk")

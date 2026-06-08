@@ -1,25 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
-from django.urls import include, path
+from django.urls import include, path, re_path
 
-from media.views import SignUpView
+from media.spa_views import SPAView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(
-        "signup/",
-        SignUpView.as_view(),
-        name="signup",
-    ),
-    path(
-        "login/",
-        auth_views.LoginView.as_view(template_name="auth/login.html"),
-        name="login",
-    ),
-    path(
-        "logout/",
-        auth_views.LogoutView.as_view(),
-        name="logout",
-    ),
-    path("", include("media.urls")),
+    path("api/", include("media.api.urls")),
+    # Весь фронтенд обслуживает React SPA (клиентский роутинг).
+    # Должен идти ПОСЛЕДНИМ, чтобы не перехватывать /admin/ и /api/.
+    re_path(r"^.*$", SPAView.as_view(), name="spa"),
 ]
